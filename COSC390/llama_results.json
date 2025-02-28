@@ -1,0 +1,1 @@
+{"model": "llama3.2", "results": {"bleu": 0.0867128425503233, "rouge": 0.2928949823403594, "exact_match": 0.0}}

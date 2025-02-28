@@ -1,0 +1,1 @@
+{"model": "deepseek-r1", "results": {"bleu": 0.04288649259929794, "rouge": 0.22956956744483065, "exact_match": 0.0}}
