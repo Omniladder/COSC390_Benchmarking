@@ -1,0 +1,115 @@
+input,output,correctness,time
+"
+        Instruction:
+        Create a solution in python for the input asked.
+    
+        Input:
+        The algorithm used is a recursive depth-first traversal of both trees. It will compare the nodes at each level of the tree, and return false if the nodes have different values or if one node is missing in one of the trees. The algorithm will only return true if all nodes in both trees are the same.
+
+At each level, the function checks if both nodes are null, indicating we've reached the end of both trees and they must be the same. Then it checks if either node is null, indicating that one tree is missing a node and they cannot be the same. If both nodes have the same value, we then recursively check their left and right children. If both children are the same, the function returns true. If at any point nodes are found to be different, the function returns false.
+        ","```python
+from collections import deque
+
+def is_same_tree(p, q):
+    if not p and not q:
+        return True
+    elif not p or not q:
+        return False
+    elif p.val != q.val:
+        return False
+    else:
+        return (is_same_tree(p.left, q.left) and 
+                is_same_tree(p.right, q.right))
+
+def is_same_tree_queue(p, q):
+    queue = deque([(p, q)])
+    
+    while queue:
+        node1, node2 = queue.popleft()
+        
+        if not node1 and not node2:
+            continue
+        elif not node1 or not node2:
+            return False
+        elif node1.val != node2.val:
+            return False
+        
+        queue.append((node1.left, node2.left))
+        queue.append((node1.right, node2.right))
+        
+    return True
+
+def is_same_tree_dp(p, q):
+    memo = {}
+    
+    def helper(p, q):
+        if (p, q) in memo:
+            return memo[(p, q)]
+        
+        if not p and not q:
+            return True
+        elif not p or not q:
+            return False
+        elif p.val != q.val:
+            return False
+        else:
+            result = helper(p.left, q.left) and helper(p.right, q.right)
+            memo[(p, q)] = result
+            return result
+        
+    return helper(p, q)
+
+def is_same_tree_memoization(p, q):
+    memo = {}
+    
+    def helper(node1, node2):
+        if (node1, node2) in memo:
+            return memo[(node1, node2)]
+        
+        if not node1 and not node2:
+            return True
+        elif not node1 or not node2:
+            return False
+        elif node1.val != node2.val:
+            return False
+        
+        result = helper(node1.left, node2.left) and helper(node1.right, node2.right)
+        memo[(node1, node2)] = result
+        return result
+    
+    return helper(p, q)
+
+def is_same_tree_iterative(p, q):
+    queue = deque([(p, q)])
+    
+    while queue:
+        node1, node2 = queue.popleft()
+        
+        if not node1 and not node2:
+            continue
+        elif not node1 or not node2:
+            return False
+        elif node1.val != node2.val:
+            return False
+        
+        queue.append((node1.left, node2.left))
+        queue.append((node1.right, node2.right))
+        
+    return True
+
+# Test the functions
+p = TreeNode(1)
+p.left = TreeNode(2)
+p.right = TreeNode(3)
+
+q = TreeNode(1)
+q.left = TreeNode(2)
+q.right = TreeNode(3)
+
+print(is_same_tree(p, q))  # Output: True
+print(is_same_tree_queue(p, q))  # Output: True
+print(is_same_tree_dp(p, q))  # Output: True
+print(is_same_tree_memoization(p, q))  # Output: True
+print(is_same_tree_iterative(p, q))  # Output: True
+
+```",3.0,184.2087316899997

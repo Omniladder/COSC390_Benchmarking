@@ -1,0 +1,7 @@
+langchain
+langchain-core
+langchain-ollama
+scikit-learn
+datasets
+pydantic
+sentence-transformers
