@@ -4,6 +4,924 @@ input,output,correctness,time
             Create a solution in python for the input asked.
         
             Input:
+            The algorithm used is a recursive depth-first traversal of both trees. It will compare the nodes at each level of the tree, and return false if the nodes have different values or if one node is missing in one of the trees. The algorithm will only return true if all nodes in both trees are the same.
+
+At each level, the function checks if both nodes are null, indicating we've reached the end of both trees and they must be the same. Then it checks if either node is null, indicating that one tree is missing a node and they cannot be the same. If both nodes have the same value, we then recursively check their left and right children. If both children are the same, the function returns true. If at any point nodes are found to be different, the function returns false.","```python
+class TreeNode:
+    def __init__(self, value=0, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def are_trees_identical(tree1, tree2):
+    # Base case: Both nodes are None
+    if tree1 is None and tree2 is None:
+        return True
+    # Base case: One node is None, the other is not
+    if tree1 is None or tree2 is None:
+        return False
+    # Base case: Values of the nodes are different
+    if tree1.value != tree2.value:
+        return False
+    # Recursive case: check left and right subtrees
+    return (are_trees_identical(tree1.left, tree2.left) and 
+            are_trees_identical(tree1.right, tree2.right))
+```",4.0,28.308834622002905
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We will solve this problem using the Inorder traversal of the binary search tree.
+
+1. Traverse the BST using Inorder traversal, and at each node, compare its value with the previous node.
+2. If the previous node's value is greater than the current node's value, it means they are swapped. So, mark the first such node as `first` and the second such node as `second`.
+3. After completing the Inorder traversal, swap the values of the `first` and `second` nodes.
+4. This approach is implemented in all four languages: C++, Java, Python, and JavaScript.
+
+Note that the TreeNode class should be defined for each implementation as it's not provided in the problem statement.","```python
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def recoverTree(root):
+    first = second = prev = None
+
+    def inorder(node):
+        nonlocal first, second, prev
+        if not node:
+            return
+        inorder(node.left)
+        
+        if prev and prev.val > node.val:
+            if not first:
+                first = prev
+            second = node
+        
+        prev = node
+        inorder(node.right)
+    
+    inorder(root)
+    
+    if first and second:
+        first.val, second.val = second.val, first.val
+```",5.0,33.648252494982444
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm follows a simple recursive approach to determine if a given binary tree is a valid Binary Search Tree (BST). The key idea is to maintain a range for each node, which is defined by the minimum and maximum values that the node's value should be within. For example, the root node's value should be in the range of (-Infinity, Infinity). When traversing to the left child, the maximum value for the range should be updated to the parent's value, and for traversing to the right child, the minimum value for the range should be updated to the parent's value. The algorithm continues recursively in this manner.
+
+A helper function, `isValidBSTHelper`, is defined and initialized with the root and the range (-Infinity, Infinity). If the node is `null`, it means that we have reached a leaf node and it should return `true`. If the value of the node is not within the specified range, it means that the node does not meet the BST requirement and the helper function should return `false`. If the node is valid, then the helper function proceeds to check for valid BSTs in its left and right subtrees with the updated range.","```python
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def isValidBST(root: TreeNode) -> bool:
+    def isValidBSTHelper(node, min_val, max_val):
+        if node is None:
+            return True
+        if not (min_val < node.val < max_val):
+            return False
+        return (isValidBSTHelper(node.left, min_val, node.val) and
+                isValidBSTHelper(node.right, node.val, max_val))
+    
+    return isValidBSTHelper(root, float('-inf'), float('inf'))
+```",5.0,37.794712369999615
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a dynamic programming approach (2D DP) to solve this problem. The algorithm checks whether the s3[position] is equal to s1 or s2 in the same dp[position]. If so, we take the value of the previous dp[i-1] or dp[j-1] accordingly if the characters match. For the base case, we start with initializing dp[0][0] to true since two empty strings can form an empty s3.
+
+At the end of the iterations, the last element in the dp matrix (i.e. dp[m][n]) will represent whether s3 can be formed by an interleaving of s1 and s2.","```python
+def is_interleave(s1, s2, s3):
+    m, n = len(s1), len(s2)
+    
+    # Length check
+    if m + n != len(s3):
+        return False
+    
+    # Initialize the DP table
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
+    
+    # Base case
+    dp[0][0] = True
+    
+    # Fill the DP table
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i > 0 and s1[i - 1] == s3[i + j - 1]:
+                dp[i][j] = dp[i][j] or dp[i - 1][j]
+            if j > 0 and s2[j - 1] == s3[i + j - 1]:
+                dp[i][j] = dp[i][j] or dp[i][j - 1]
+    
+    return dp[m][n]
+```",4.0,60.043232541996986
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is based on dynamic programming. We create an array `dp` of length `n + 1`, with `dp[0]` and `dp[1]` equal to 1, which corresponds to the cases of 0 and 1 node respectively. Next, we iterate from 2 to `n`, and for each value `i`, we iterate from 0 to `i` and accumulate `dp[j] * dp[i - j - 1]` in `dp[i]`. This process represents the number of structurally unique BSTs for the left subtree and right subtree for each possible node arrangement of the BST. At the end, `dp[n]` represents the number of structurally unique BSTs with precisely n nodes.","```python
+def numUniqueBSTs(n: int) -> int:
+    if n < 0:
+        return 0  # Handle any negative input case
+    dp = [0] * (n + 1)
+    dp[0], dp[1] = 1, 1  # Base cases
+    
+    for i in range(2, n + 1):
+        for j in range(i):
+            dp[i] += dp[j] * dp[i - j - 1]  # Left * Right
+            
+    return dp[n]
+
+# Example test cases
+assert numUniqueBSTs(0) == 1
+assert numUniqueBSTs(1) == 1
+assert numUniqueBSTs(2) == 2
+assert numUniqueBSTs(3) == 5
+assert numUniqueBSTs(4) == 14
+assert numUniqueBSTs(5) == 42
+```",4.0,38.830954953999026
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a recursive one. It starts by iterating from `start` to `end`. For every value `i`, it generates left and right subtrees by calling itself recursively with the modified start and end values,  i.e., `generateTrees(start, i - 1)` for the left subtree and `generateTrees(i + 1, end)` for the right subtree. It then creates new nodes with the value `i` and combinations of left and right subtrees, adding the newly created nodes to the `trees` list.
+
+Finally, the function returns the list of trees when the recursive calls end.","```python
+# Definition of a binary tree node
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+# Main function to generate unique BSTs
+def generateTrees(start, end):
+    if start > end:
+        return []
+
+    trees = []
+    for i in range(start, end + 1):
+        # Generate all left subtrees
+        left_trees = generateTrees(start, i - 1)
+        # Generate all right subtrees
+        right_trees = generateTrees(i + 1, end)
+
+        # If left tree is empty, use None
+        if not left_trees:
+            left_trees = [None]
+        # If right tree is empty, use None
+        if not right_trees:
+            right_trees = [None]
+
+        # Combine left and right trees with the current root node
+        for left in left_trees:
+            for right in right_trees:
+                root = TreeNode(i)
+                root.left = left
+                root.right = right
+                trees.append(root)
+
+    return trees
+```",4.0,34.30131230599363
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm simply performs an inorder traversal on the given binary tree. An inorder traversal goes as follows: 
+
+1. Traverse the left subtree, and call the function recursively for the left child.
+2. Visit the root.
+3. Traverse the right subtree, and call the function recursively for the right child.
+
+This process is implemented by defining a helper function (`inorderTraversalHelper`) that takes a node and a `result` list (or vector in C++), and appends the node's value to the `result` list according to the inorder traversal order. The main `inorderTraversal` function initializes the result list and calls the helper function with the root of the tree. At the end, `inorderTraversal` returns the result list containing the values of the nodes in inorder traversal order.","```python
+class TreeNode:
+    def __init__(self, value=0, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def inorderTraversal(root):
+    result = []
+    inorderTraversalHelper(root, result)
+    return result
+
+def inorderTraversalHelper(node, result):
+    if node is None:
+        return
+    inorderTraversalHelper(node.left, result)
+    result.append(node.value)
+    inorderTraversalHelper(node.right, result)
+```",4.0,35.79422993201297
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a Depth-First Search algorithm to explore all possible configurations of the IP address. The function takes in the input string (s), the starting index (start), the partially constructed IP address (ip), and the current part count (part).
+
+In each call to the function, we try to add one part to the IP address. If 4 parts have been added and we have reached the end of the input string, we have found a valid IP address and add it to the result list.
+
+The algorithm iterates through the string s, starting at the current index. It keeps track of the current number (0-255) being constructed by multiplying the current number by 10 and adding the current digit. If the current number is greater than 255, we break the iteration.
+
+We then call the dfs function recursively, with the current index incremented by one, the current IP appended with the current character and a dot, and incrementing part by 1. If the current number is 0 (which indicates a leading zero), we also break the iteration.
+
+This process is repeated for all valid parts and combinations, eventually forming all possible valid IP addresses.","```python
+def restore_ip_addresses(s):
+    def is_valid_segment(segment):
+        if len(segment) > 1 and segment[0] == '0':  # leading zero check
+            return False
+        return 0 <= int(segment) <= 255
+
+    def dfs(start, ip, part):
+        if part == 4:  # Have we formed 4 parts?
+            if start == len(s):  # Check if we've used all characters
+                results.append(ip[:-1])  # Remove trailing dot before adding
+            return
+        
+        for length in range(1, 4):  # Valid segment lengths are 1, 2, or 3
+            if start + length <= len(s):  # Ensure we don't push past the string
+                segment = s[start:start + length]
+                if is_valid_segment(segment):  # Validate the segment
+                    dfs(start + length, ip + segment + '.', part + 1)  # Recurse with current segment added to IP
+    
+    results = []
+    if 4 <= len(s) <= 12:  # Check string length validity
+        dfs(0, '', 0)  # Start DFS from index 0 with an empty IP and 0 parts
+    return results
+```",4.0,39.706970044004265
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm creates a dummy node and connects it to the head of the linked list. It then iterates through the list, reversing the nodes from position `left` to `right`. It maintains pointers `pre` and `cur` to accomplish this. During each iteration, it temporarily stores the next node using a pointer `t`, then reverses the connections between the nodes.
+
+This process is repeated for all languages; the only differences in implementation are syntax-related. 
+
+In C++, use pointers and ""->"" to access the next node. In Java and Python, we use dot notation to access the next attribute. In JavaScript, we also use dot notation and ""==="" for equality comparison between left and right.","```python
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def reverseBetween(head: ListNode, left: int, right: int) -> ListNode:
+    if not head or left == right:
+        return head
+
+    dummy = ListNode(0)
+    dummy.next = head
+    pre = dummy
+    
+    for _ in range(left - 1):
+        pre = pre.next
+
+    cur = pre.next
+
+    for _ in range(right - left):
+        temp = cur.next
+        cur.next = temp.next
+        temp.next = pre.next
+        pre.next = temp
+
+    return dummy.next
+```",4.0,37.70895142000518
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use dynamic programming (DP) to solve this problem. The `dp` array is of size `n+1`, where `n` is the length of the input string `s`. `dp[i]` stores the number of ways to decode the substring `s[0:i]`.
+
+Initialize `dp[0]` to 1 because there is always one way to decode an empty string.
+
+For each character in the string `s`, consider its corresponding one-digit and two-digits representations. If the one-digit representation is valid (>=1), we can increment `dp[i]` by `dp[i-1]`, which means one more way to decode the string by using the one-digit representation of the current character. If the two-digits representation is valid (>=10 and <=26), we can increment `dp[i]` by `dp[i-2]`, meaning one way to decode the string by using the two-digits representation of the current character.
+
+After we finished iterating through the string `s`, `dp[n]` will store the number of ways to decode the entire string.","```python
+def numDecodings(s: str) -> int:
+    n = len(s)
+    if n == 0 or s[0] == '0':
+        return 0
+
+    dp = [0] * (n + 1)
+    dp[0] = 1  # One way to decode an empty string
+
+    for i in range(1, n + 1):
+        # Check single digit
+        one_digit = int(s[i-1:i])
+        if 1 <= one_digit <= 9:
+            dp[i] += dp[i-1]
+        
+        # Check two digits
+        if i > 1:
+            two_digits = int(s[i-2:i])
+            if 10 <= two_digits <= 26:
+                dp[i] += dp[i-2]
+
+    return dp[n]
+
+# Example test cases
+print(numDecodings(""12""))   # Expected output: 2
+print(numDecodings(""226""))  # Expected output: 3
+print(numDecodings(""0""))    # Expected output: 0
+print(numDecodings(""10""))   # Expected output: 1
+print(numDecodings(""30""))   # Expected output: 0
+```",4.0,31.711412195989396
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm first sorts the given array, and then it generates all possible subsets. For each subset, it checks if it already exists in the result set. If not, it adds the subset to the result set.
+
+The algorithm uses a backtracking approach. It starts with an empty subset and iteratively adds elements from the input array to the subset. It keeps track of the starting index to avoid creating duplicate subsets.
+
+In the C++ and Java implementations, a `set` data structure is used to store unique subsets. In the Python implementation, Python's `set` is used along with itertools' `combinations` function to achieve the same result. In the JavaScript implementation, a `Set` object is used, but as it doesn't handle array comparisons properly, each subset is converted into a JSON string to compare the string representation of subsets.
+
+At the end, the function returns the result set, converted into the desired format (list of lists or vector of vectors).","```python
+def subsets_with_duplicates(arr):
+    def backtrack(start, path):
+        result.append(path)
+        
+        for i in range(start, len(arr)):
+            if i > start and arr[i] == arr[i - 1]:
+                continue
+            backtrack(i + 1, path + [arr[i]])
+    
+    arr.sort()
+    result = []
+    backtrack(0, [])
+    
+    return result
+
+# Example test cases
+print(subsets_with_duplicates([1, 2, 2]))  # Expected: [[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]
+print(subsets_with_duplicates([]))          # Expected: [[]]
+print(subsets_with_duplicates([1, 1, 1]))   # Expected: [[], [1], [1, 1], [1, 1, 1]]
+```",4.0,31.858781960996566
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm generates an n-bit gray code sequence by following the simple bitwise operation:
+
+1. Loop through all numbers from 0 to 2^n - 1.
+2. For each number i, calculate the gray code value by performing the bitwise XOR operation (i ^ (i >> 1))
+3. Add the gray code value to the result list or vector.
+
+The algorithm has a time complexity of O(2^n) which is the size of the output sequence. The space complexity is also O(2^n), as we store the sequence in a list or vector.","```python
+def gray_code(n):
+    result = []
+    for i in range(1 << n):  # 1 << n is the same as 2**n
+        gray = i ^ (i >> 1)   # Calculate the gray code for the current number
+        result.append(gray)   # Append it to the result list
+    return result
+```",5.0,30.701776226982474
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a two-pointer approach to merge nums1 and nums2 in reverse order. Initialize three pointers i, j, and k pointing to the last elements of nums1, nums2, and the merged nums1 array respectively.
+
+Iterate in a while loop until i and j are both less than 0. Compare the values of nums1[i] and nums2[j]. If nums1[i] is greater, assign nums1[i] at position k in nums1, decrement i and k. Otherwise, assign nums2[j] at position k in nums1, and decrement j and k. This process continues for all elements in nums2.
+
+After the loop, if there are still elements remaining in nums2 (j >= 0), copy the remaining elements of nums2 to nums1. In this way, we merge nums1 and nums2 in non-decreasing order.","```python
+def merge(nums1, m, nums2, n):
+    i = m - 1  # Pointer for nums1
+    j = n - 1  # Pointer for nums2
+    k = m + n - 1  # Pointer for the merged array
+
+    # Start merging from the end
+    while i >= 0 and j >= 0:
+        if nums1[i] > nums2[j]:
+            nums1[k] = nums1[i]
+            i -= 1
+        else:
+            nums1[k] = nums2[j]
+            j -= 1
+        k -= 1
+    
+    # If there are remaining elements in nums2, copy them
+    while j >= 0:
+        nums1[k] = nums2[j]
+        j -= 1
+        k -= 1
+```",5.0,40.39508382198983
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm works by recursively dividing the strings into smaller substrings and checking if the substrings from s1 can be rearranged into the corresponding substrings of s2. The base case is when both strings (s1, and s2) are equal. If the lengths of the strings are different or the characters are different, then the function returns false. Then, we iterate through the length of strings, dividing the strings into smaller substrings and checking if these substrings can be rearranged to form the scrambled string. We check for both possible arrangements of the substrings, i.e., same order and reverse order, invoking the same function recursively for each combination.","```python
+def is_scramble(s1: str, s2: str) -> bool:
+    # Base Case 1: If strings are identical
+    if s1 == s2:
+        return True
+    # Base Case 2: If lengths differ
+    if len(s1) != len(s2):
+        return False
+    # Base Case 3: If characters differ in frequency
+    if sorted(s1) != sorted(s2):
+        return False
+    
+    n = len(s1)
+    for i in range(1, n):  # Try splitting s1 and s2 at every index
+        # Check without swapping
+        if (is_scramble(s1[:i], s2[:i]) and is_scramble(s1[i:], s2[i:])):
+            return True
+        # Check with swapping
+        if (is_scramble(s1[:i], s2[-i:]) and is_scramble(s1[i:], s2[:-i])):
+            return True
+    return False
+```",5.0,30.979778498003725
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Create two new ListNodes: less_head and more_head. These will act as head pointers for partitions of nodes that have values less than x and greater than or equal to x.
+2. Initialize two pointers, less_ptr and more_ptr, to point to the dummy head nodes just created.
+3. Iterate through the original linked list. For each node, compare its value with the given x.
+4. If the current node's value is less than x, append it to the partition pointed by less_ptr, and move less_ptr forward.
+5. If the current node's value is greater than or equal to x, append it to the partition pointed by more_ptr, and move more_ptr forward.
+6. Perform the above steps until the entire linked list has been traversed.
+7. After iterating through the linked list, connect the end of the less partition with the start of the more partition.
+8. Move the more_ptr to the end of its partition setting the its next to null.
+9. Return the head of the new partitioned linked list, which is less_head.next","```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def partition(head: ListNode, x: int) -> ListNode:
+    # Create dummy head nodes
+    less_head = ListNode(0)
+    more_head = ListNode(0)
+
+    # Initialize pointers for less and more lists
+    less_ptr = less_head
+    more_ptr = more_head
+
+    # Traverse the original linked list
+    current = head
+    while current:
+        if current.val < x:
+            # Append to the less partition
+            less_ptr.next = current
+            less_ptr = less_ptr.next
+        else:
+            # Append to the more partition
+            more_ptr.next = current
+            more_ptr = more_ptr.next
+        current = current.next  # Move to the next node
+
+    # Connect the less partition to the more partition
+    less_ptr.next = more_head.next
+    more_ptr.next = None  # End the more partition
+
+    # Return the head of the new partitioned list
+    return less_head.next
+```",5.0,32.57044140200014
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a stack to keep track of indices of increasing heights. The height-array is updated every row to add the height of the previous row if the cell value is '1', else it is set to 0. Every time a smaller height is encountered than the top of the stack, we pop the top of the stack and calculate the area using that height (popped value) and the width (current index minus the index below the top of the stack minus 1), updating maxArea with the new maximum value. 
+
+This is done for all the rows of the matrix, and finally, the maxArea is returned.","```python
+def maximalRectangle(matrix):
+    if not matrix:
+        return 0
+    
+    maxArea = 0
+    n = len(matrix[0])
+    height = [0] * n  # Array to store heights
+    
+    for row in matrix:
+        for j in range(n):
+            height[j] = height[j] + 1 if row[j] == '1' else 0
+        
+        # Now compute the maximal rectangle for this histogram represented by height
+        stack = []
+        for j in range(n + 1):
+            h = height[j] if j < n else 0  # Sentinel height at the end
+            while stack and height[stack[-1]] > h:
+                top = stack.pop()
+                width = j if not stack else j - stack[-1] - 1
+                maxArea = max(maxArea, height[top] * width)
+            stack.append(j)
+    
+    return maxArea
+```",4.0,33.076322973007336
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm utilizes a stack to keep track of the indices of the heights array. It starts iterating through the array, appending a zero at the end to ensure the last bar is considered. When a higher bar is found, it is pushed onto the stack, and if a lower bar is found, it calculates the area of the bar under the current top of the stack considering the width between the current bar and the next lowest bar in the stack, storing the highest area found.
+
+This algorithm has a time complexity of O(n) as it iterates through the heights only once, resulting in optimal performance.","```python
+def max_histogram_area(heights):
+    heights.append(0)
+    n = len(heights)
+    stack = []
+    max_area = 0
+    
+    for i in range(n):
+        while stack and heights[i] < heights[stack[-1]]:
+            h = heights[stack.pop()]
+            w = i if not stack else i - stack[-1] - 1
+            max_area = max(max_area, h * w)
+        stack.append(i)
+    
+    return max_area
+
+# Example test cases
+assert max_histogram_area([2, 1, 5, 6, 2, 3]) == 10
+assert max_histogram_area([2, 4]) == 8
+assert max_histogram_area([]) == 0
+assert max_histogram_area([0, 1, 0, 1]) == 1
+assert max_histogram_area([1, 2, 3, 4, 5]) == 9
+```",4.0,32.243914025020786
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm to delete all duplicates in a sorted linked list simply iterates through the list and compares the value of the current node with the value of the next. If both values are the same, it means that there is a duplicate, so the current node's ""next"" pointer is updated to point to the node after the duplicate. If the values are different, the algorithm continues iterating to the next node. The process continues until reaching the end of the list. Since the linked list is already sorted, this algorithm guarantees that duplicates will appear consecutively, allowing for their removal in linear time.","```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def deleteDuplicates(head):
+    current = head  # Initialize current pointer
+    while current and current.next:  # Traverse till the end of the list
+        if current.val == current.next.val:  # Check for duplicates
+            current.next = current.next.next  # Skip duplicate
+        else:
+            current = current.next  # Move to the next node
+    return head  # Return modified list head
+
+# Utility functions for testing
+def create_linked_list(elements):
+    if not elements:
+        return None
+    head = ListNode(elements[0])
+    current = head
+    for value in elements[1:]:
+        current.next = ListNode(value)
+        current = current.next
+    return head
+
+def linked_list_to_list(head):
+    result = []
+    current = head
+    while current:
+        result.append(current.val)
+        current = current.next
+    return result
+
+# Testing the function
+# Case 1: Empty list
+assert deleteDuplicates(create_linked_list([])) == None
+
+# Case 2: List with one element
+assert linked_list_to_list(deleteDuplicates(create_linked_list([1]))) == [1]
+
+# Case 3: All duplicates
+assert linked_list_to_list(deleteDuplicates(create_linked_list([1, 1, 1]))) == [1]
+
+# Case 4: No duplicates
+assert linked_list_to_list(deleteDuplicates(create_linked_list([1, 2, 3]))) == [1, 2, 3]
+
+# Case 5: Mixed duplicates
+assert linked_list_to_list(deleteDuplicates(create_linked_list([1, 1, 2, 3, 3]))) == [1, 2, 3]
+```",5.0,36.223380174982594
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a dummy node to simplify the handling of the head node of the linked list. We declare two pointers: `prev` and `curr` which are pointers to the previous and current nodes, respectively. 
+
+The algorithm iterates through the list with the current pointer. If the current node's value is equal to the next node's value, we continue moving the current pointer along the duplicate values. Once we reach the end of duplicates, we check if the previous node's next pointer is pointing to the current node. If it is, it means there were no duplicates (prev and curr are consecutive), so we move the `prev` pointer to the current node. Otherwise, we set `prev.next` to `curr.next` to skip the duplicates. 
+
+Finally, we move the current pointer to the next node, and repeat the process. The resulting list will have all duplicates removed, and the changes will persist as the dummy node is used to reference the head of the modified list.","```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def deleteDuplicates(head):
+    dummy = ListNode(0, head)
+    prev = dummy
+    curr = head
+
+    while curr:
+        if curr.next and curr.val == curr.next.val:
+            while curr.next and curr.val == curr.next.val:
+                curr = curr.next
+            prev.next = curr.next
+        else:
+            prev = prev.next
+            
+        curr = curr.next
+
+    return dummy.next
+```",4.0,32.29971297000884
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is based on a modified binary search. We start by setting two pointers named `left` and `right` at the first and last element of the array, respectively. We then enter a loop, which continues until the `left` pointer is less than or equal to the `right` pointer.
+
+Inside the loop, we first calculate the middle index `mid` using the `left` and `right` pointers. If the middle element of the array is equal to the target, we return true, indicating that the target is found.
+
+If the middle element is equal to the left element, we increment the `left` pointer. If the middle element is greater than the left element, we check if the target is within the left and middle elements. If it is, we set the `right` pointer to the middle index minus one. Otherwise, we set the `left` pointer to the middle index plus one.
+
+If the middle element is still smaller than the left element, we then check if the target is within the middle and right elements. If it is, we set the `left` pointer to the middle index plus one. Otherwise, we set the `right` pointer to the middle index minus one.
+
+After the loop, we return false if the target is not found in the array.","```python
+def search(nums, target):
+    left, right = 0, len(nums) - 1
+    
+    while left <= right:
+        mid = left + (right - left) // 2
+        
+        if nums[mid] == target:
+            return True
+        
+        # Handle duplicates
+        if nums[mid] == nums[left]:  
+            left += 1
+        elif nums[mid] > nums[left]:  
+            if nums[left] <= target < nums[mid]:  
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:  # nums[mid] < nums[left]
+            if nums[mid] < target <= nums[right]:  
+                left = mid + 1
+            else:
+                right = mid - 1
+
+    return False
+```",5.0,37.75843946801615
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a two-pointer technique. The variable `i` represents the pointer to the position in the array where the next unique element will be placed. For each element in the input array, we check if either `i < 2` (meaning we haven't encountered 2 unique elements yet) or the current element (`num`) is greater than the element in the array at index `i - 2` (this condition ensures that the current element appears at most twice in the array). If either of these conditions are true, we place the current element at index `i` and increment `i`. The function returns the value of `i` at the end, which represents the length of the modified array after removing duplicates.","```python
+def remove_duplicates(nums):
+    if not nums:
+        return 0
+
+    i = 0  # Pointer for the unique position
+    for j in range(len(nums)):
+        if i < 2 or nums[j] > nums[i - 2]:
+            nums[i] = nums[j]
+            i += 1
+    return i
+```",4.0,32.31371099900571
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            For each of the implementation above, we use a Depth-First Search (DFS) based algorithm to traverse the grid board. The DFS function takes the current cell index i and j and the index of the character in the input word that we are looking for (k).
+
+The base cases are:
+- If the cell indexes i or j are out of boundaries, or the board[i][j] character does not match word[k], return false.
+- If k (current character index) is equal to word.length - 1, we find the word in the grid, so return true.
+
+For each cell, we run the DFS function with the given input parameters. If DFS returns true (found the word), the whole function will return true.","```python
+def exist(board, word):
+    if not board or not board[0]:
+        return False
+    
+    rows, cols = len(board), len(board[0])
+    
+    def dfs(i, j, k):
+        if i < 0 or i >= rows or j < 0 or j >= cols or board[i][j] != word[k]:
+            return False
+        if k == len(word) - 1:
+            return True
+        
+        temp = board[i][j]
+        board[i][j] = '#'
+        
+        found = (dfs(i + 1, j, k + 1) or 
+                 dfs(i - 1, j, k + 1) or 
+                 dfs(i, j + 1, k + 1) or 
+                 dfs(i, j - 1, k + 1))
+        
+        board[i][j] = temp
+        
+        return found
+
+    for i in range(rows):
+        for j in range(cols):
+            if board[i][j] == word[0] and dfs(i, j, 0):
+                return True
+                
+    return False
+```",4.0,41.49643036001362
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Calculate the number of subsets in the power set (2^n) using bit manipulation.
+2. Loop through all numbers from 0 to 2^n - 1.
+3. For each number, loop through its bits, and if the bit is set (1), include the corresponding element from the input array in the current subset.
+4. Add the current subset to the result list.
+5. After the loops finish, return the result list containing all subsets.","```python
+def generate_power_set(input_array):
+    n = len(input_array)
+    power_set_size = 1 << n  # Equivalent to 2 ** n
+    result = []
+    
+    for num in range(power_set_size):  # Loop from 0 to 2^n - 1
+        current_subset = []
+        for j in range(n):  # Check each bit position
+            if num & (1 << j):  # If the j-th bit of num is set
+                current_subset.append(input_array[j])
+        result.append(current_subset)
+
+    return result
+```",5.0,30.903878936980618
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a backtracking approach to generate all possible combinations of k numbers out of the range [1, n]. We create a helper function called `backtrack` that recursively generates combinations. In this helper function, we have a base case where if the size of the current combination is equal to k, we add it to the result. Otherwise, we iterate through the numbers from the start index to n, add the current number to the current combination, and make a recursive call with an incremented start index. After the call, we ""undo"" the decision by removing the number from the current combination (backtracking).
+
+The main function initializes an empty result list, calls the `backtrack` function with a start index of 1 and an empty current combination list, and then returns the result list.","```python
+def combine(n, k):
+    result = []
+    
+    def backtrack(start, current_combination):
+        if len(current_combination) == k:
+            result.append(current_combination[:])  # Append a copy of the current combination
+            return
+        
+        for i in range(start, n + 1):
+            current_combination.append(i)       # Make a choice
+            backtrack(i + 1, current_combination)  # Move to the next number
+            current_combination.pop()            # Undo the choice (backtrack)
+    
+    backtrack(1, [])
+    return result
+
+# Test cases
+print(combine(4, 2))  # Expected: [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
+print(combine(3, 3))  # Expected: [[1, 2, 3]]
+print(combine(5, 0))  # Expected: [[]]
+print(combine(3, 4))  # Expected: []
+```",5.0,34.03949298299267
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a sliding window approach to find the minimum window substring. We use two pointers, `left` and `right`, to represent the current window. 
+
+1. Initialize an unordered_map or dictionary for `need` to store characters and their counts in `t`, and another for `window` to store characters and their counts in the current window.
+2. Initialize `left` and `right` pointers, `valid` counter for keeping track of characters satisfying the criteria, and `start` and `length` for holding the answer substring information.
+3. Iterate through the string `s` using the `right` pointer, and:
+    - If the current character exists in the `need` map, update the count of the character in the `window` map, and increment `valid` if the count in the window is less than or equal to the count in need.
+4. Check the validity by comparing `valid` with the length of `t`.
+    - If valid, update the answer substring's `start` and `length` if the current window's length is less than the current minimum.
+    - Then, increment the `left` pointer to slide the window until the current character count in the window goes below the count in `need`. Update the `valid` counter accordingly.
+5. Return the answer substring, or empty string if no window was found.","```python
+def min_window(s: str, t: str) -> str:
+    from collections import defaultdict
+    
+    if not s or not t:
+        return """"
+    
+    need = defaultdict(int)
+    window = defaultdict(int)
+    
+    for char in t:
+        need[char] += 1
+    
+    left, right = 0, 0
+    valid = 0
+    start, length = 0, float('inf')
+    
+    while right < len(s):
+        c = s[right]
+        right += 1
+        
+        if c in need:
+            window[c] += 1
+            if window[c] == need[c]:
+                valid += 1
+        
+        while valid == len(need):
+            if right - left < length:
+                start, length = left, right - left
+            
+            d = s[left]
+            left += 1
+            
+            if d in need:
+                if window[d] == need[d]:
+                    valid -= 1
+                window[d] -= 1
+    
+    return s[start:start + length] if length != float('inf') else """"
+```",4.0,45.472467487998074
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm can be explained using three pointers: `red`, `white`, and `blue`. `red` is responsible for tracking the position where the next 0 should be moved to, starting from the beginning of the array. Likewise, `blue` is responsible for tracking the position where the next 2 should be swapped to, starting from the end of the array. `white` is responsible for iterating through the array.
+
+While `white` is less than or equal to `blue`, check the current `nums[white]` value. If it is 0, swap it with the value at index `red`, and increment both `red` and `white`. If it is 1, simply increment `white`. If it is 2, swap the value at index `white` with the value at index `blue`, and decrement `blue` without incrementing `white` since the newly swapped value at index `white` might be 0 or 2.
+
+This will sort the colors in the required order with a linear-time complexity, as we only go through the array once with the `white` pointer. Also, it sorts the colors in-place without the need for additional storage.","```python
+def sort_colors(nums):
+    red, white, blue = 0, 0, len(nums) - 1
+    
+    while white <= blue:
+        if nums[white] == 0:
+            nums[red], nums[white] = nums[white], nums[red]  # Swap 0 to the front
+            red += 1
+            white += 1
+        elif nums[white] == 1:
+            white += 1  # Just move forward
+        else:  # nums[white] == 2
+            nums[white], nums[blue] = nums[blue], nums[white]  # Swap 2 to the back
+            blue -= 1  # Do not increment white
+
+# Sample Testing
+print(sort_colors([2, 0, 2, 1, 1]))  # Expected Output: [0, 1, 1, 2, 2]
+print(sort_colors([2, 0, 1]))         # Expected Output: [0, 1, 2]
+print(sort_colors([]))                 # Expected Output: []
+print(sort_colors([1]))                # Expected Output: [1]
+print(sort_colors([0, 0, 0]))          # Expected Output: [0, 0, 0]
+```",5.0,39.02023229000042
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses binary search on an m x n matrix.
+
+Firstly, the number of rows and columns (m and n) are computed. Then, we initialize the left and right pointers (l and r).
+
+In each step of the binary search, we calculate the middle index (mid) and get the corresponding value (mid_val) in the matrix. To get the value in the matrix, we divide mid by n and take the remainder.
+
+We then compare the mid_val with the target. If it is equal to the target, we return true. If it's less than the target, we move the left pointer to the next position (mid + 1). Otherwise, we move the right pointer (mid - 1).
+
+If the search space has been fully explored and the target is not found, we return false.","```python
+def searchMatrix(matrix, target):
+    if not matrix or not matrix[0]:
+        return False
+
+    m, n = len(matrix), len(matrix[0])
+    l, r = 0, m * n - 1
+
+    while l <= r:
+        mid = (l + r) // 2
+        row, col = mid // n, mid % n
+        mid_val = matrix[row][col]
+
+        if mid_val == target:
+            return True
+        elif mid_val < target:
+            l = mid + 1
+        else:
+            r = mid - 1
+
+    return False
+```",5.0,33.22697481501382
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
             1. Iterate over the matrix, marking the first element of the row and column for every 0 encountered.
 2. Set a flag if the first row or the first column has a 0.
 3. Iterate over the matrix, ignoring the first row and first column. Set the element to 0 if the corresponding first row or column is marked.
