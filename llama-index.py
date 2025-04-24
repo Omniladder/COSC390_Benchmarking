@@ -23,7 +23,7 @@ model_interface = ModelInterface(
     reasoning_models=reasoning_models,
     output_model=OllamaLLM(model="llama3.1") # langchain base chat model
 )
-
+mistral = OllamaLLM(model="mistral")
 print("models declared")
 
 json_data = pd.read_json("leetcodecomplete.jsonl", lines=True)
@@ -58,9 +58,7 @@ for json_index in range(len(json_data[:100])):
     
         start_time = time.perf_counter()
         # model_output = llama.invoke(prompt)
-        model_output = collaboration.collaborate_code_2(
-            prompt=prompt
-        )
+        model_output = mistral.invoke(prompt)
         end_time = time.perf_counter()
     
         result = evaluator.evaluate(
