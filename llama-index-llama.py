@@ -20,14 +20,14 @@ llama = OllamaLLM(model="llama3.1")
 openai = ChatOpenAI(model="gpt-4o-mini", api_key=api_key)
 
 reasoning_models = {
-    "mistral": openai, # langchain base  model
-    "deepseek": openai# langchain base  model
+    "mistral": llama, # langchain base  model
+    "deepseek": llama# langchain base  model
 }
 
 
 model_interface = ModelInterface(
     reasoning_models=reasoning_models,
-    output_model=openai # langchain base chat model
+    output_model=llama # langchain base chat model
 )
 '''
 mistral = OllamaLLM(model="mistral")
@@ -103,4 +103,4 @@ for json_index in range(len(json_data[:100])):
     except Exception as e:
         print(e)
         continue
-    output_data.to_csv("./llama_results_linear.csv", index=False)
+    output_data.to_csv("./only_llama_results_linear.csv", index=False)

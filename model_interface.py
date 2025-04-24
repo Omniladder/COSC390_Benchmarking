@@ -11,12 +11,12 @@ class ModelInterface(BaseModel):
     generation, with minimal logic for model access and identification.
     """
     
-    reasoning_models: Dict[str, OllamaLLM] = Field(
+    reasoning_models: Dict[str, Any] = Field(
         default_factory=dict,
         description="Dictionary of reasoning models {model_id: model}"
     )
     
-    output_model: Optional[OllamaLLM] = Field(
+    output_model: Optional[Any] = Field(
         None,
         description="Model used for final output generation"
     )
@@ -24,7 +24,7 @@ class ModelInterface(BaseModel):
     class Config:
         arbitrary_types_allowed = True
     
-    def add_reasoning_model(self, model_id: str, model: OllamaLLM) -> None:
+    def add_reasoning_model(self, model_id: str, model: Any) -> None:
         """Add a reasoning model to the interface.
         
         Args:
@@ -33,7 +33,7 @@ class ModelInterface(BaseModel):
         """
         self.reasoning_models[model_id] = model
     
-    def get_reasoning_model(self, model_id: str) -> Optional[OllamaLLM]:
+    def get_reasoning_model(self, model_id: str) -> Optional[Any]:
         """Get a specific reasoning model by ID.
         
         Args:
@@ -44,7 +44,7 @@ class ModelInterface(BaseModel):
         """
         return self.reasoning_models.get(model_id)
     
-    def set_output_model(self, model: OllamaLLM) -> None:
+    def set_output_model(self, model: Any) -> None:
         """
         Set the output model.
         

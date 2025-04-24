@@ -1,0 +1,25 @@
+input,output,correctness,time
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm leverages a hash map (unordered_map in C++, HashMap in Java, dictionary in Python, and Map in JavaScript). It iterates through the given 'nums' array and calculates the complementary value (target - current value). If the complementary value is already in the hash map, it means that we found a solution, and we return those indices. If the complement is not in the hash map, we store the current element in the hash map with its index. If the algorithm doesn't find the solution, it returns an empty array or throws an exception (in Java).
+
+This approach has a time complexity of O(n) and a space complexity of O(n) as well.","```python
+def twoSum(nums, target):
+    if len(nums) <= 1:
+        return []
+
+    num_dict = {}
+    
+    for i, num in enumerate(nums):
+        complement = target - num
+        
+        if complement in num_dict:
+            return [num_dict[complement], i]
+        
+        num_dict[num] = i
+
+    return []
+```",5.0,3.2135790119937155
