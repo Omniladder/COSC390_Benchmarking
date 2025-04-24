@@ -25,8 +25,7 @@ model_interface = ModelInterface(
     reasoning_models=reasoning_models,
     output_model=OllamaLLM(model="llama3.1") # langchain base chat model
 )
-'''
-
+mistral = OllamaLLM(model="mistral")
 print("models declared")
 
 json_data = pd.read_json("leetcodecomplete.jsonl", lines=True)
