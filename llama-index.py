@@ -14,6 +14,8 @@ from model_interface import ModelInterface
 print("imports done")
 
 
+mistral = OllamaLLM(model="mistral")
+'''
 reasoning_models = {
     "mistral": OllamaLLM(model="mistral"), # langchain base  model
     "deepseek": OllamaLLM(model="deepseek-v2")# langchain base  model
@@ -23,6 +25,7 @@ model_interface = ModelInterface(
     reasoning_models=reasoning_models,
     output_model=OllamaLLM(model="llama3.1") # langchain base chat model
 )
+'''
 
 print("models declared")
 
@@ -30,10 +33,12 @@ json_data = pd.read_json("leetcodecomplete.jsonl", lines=True)
 
 print("data loaded")
 
+'''
 collaboration = Collaboration(
     reasoning_model_ids=["mistral", "deepseek"], # list of model ids such as ["gpt", "deepseek"]
     model_interface=model_interface
 )
+'''
 
 # print(json_data)
 # for column_index, column in enumerate(json_data["instruction"]):
@@ -58,9 +63,7 @@ for json_index in range(len(json_data[:100])):
     
         start_time = time.perf_counter()
         # model_output = llama.invoke(prompt)
-        model_output = collaboration.collaborate_code_2(
-            prompt=prompt
-        )
+        model_output = mistral.invoke(prompt)
         end_time = time.perf_counter()
     
         result = evaluator.evaluate(
@@ -86,6 +89,7 @@ for json_index in range(len(json_data[:100])):
                 output_data,
             ]
         )
-    except:
+    except Exception as e:
+        print(e)
         continue
-    output_data.to_csv("./llama_results_linear.csv", index=False)
+    output_data.to_csv("./mistral_results_linear.csv", index=False)
