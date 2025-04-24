@@ -170,7 +170,7 @@ def _create_chat_chain_code_collaboration(
     """
     Create a chat chain that takes reasoning and user query.
     """
-    prompt = ChatPromptTemplate.from_template(CHAT_PROMPT_CODE_COLLABORATION)
+    prompt = ChatPromptTemplate.from_template(CHAT_PROMPT_CODE_COLLABORATION_2)
     return prompt | model | StrOutputParser()
 
 def _create_chat_chain_code_no_collaboration(
@@ -237,6 +237,8 @@ class Collaboration:
         # Get models from interface
         self.reasoning_1 = model_interface.reasoning_models[reasoning_model_ids[0]]
         self.reasoning_2 = model_interface.reasoning_models[reasoning_model_ids[1]]
+        self.reasoning_1_chain = _create_reasoning_chain_code(self.reasoning_1)
+        self.reasoning_2_chain = _create_reasoning_chain_code(self.reasoning_2)
         
         self.chat_chain = _create_chat_chain_code_collaboration(model_interface.output_model)
         

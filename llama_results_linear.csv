@@ -1,0 +1,3428 @@
+input,output,correctness,time
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm used is a recursive depth-first traversal of both trees. It will compare the nodes at each level of the tree, and return false if the nodes have different values or if one node is missing in one of the trees. The algorithm will only return true if all nodes in both trees are the same.
+
+At each level, the function checks if both nodes are null, indicating we've reached the end of both trees and they must be the same. Then it checks if either node is null, indicating that one tree is missing a node and they cannot be the same. If both nodes have the same value, we then recursively check their left and right children. If both children are the same, the function returns true. If at any point nodes are found to be different, the function returns false.","```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def compareTrees(tree1, tree2):
+    if tree1 is None and tree2 is None:
+        return True
+    if tree1 is None or tree2 is None:
+        return False
+    elif tree1.val != tree2.val:
+        return False
+    else:
+        return compareTreesHelper(tree1.left, tree2.left) and compareTreesHelper(tree1.right, tree2.right)
+
+def compareTreesHelper(node1, node2):
+    if node1 is None and node2 is None:
+        return True
+    elif node1 is None or node2 is None:
+        return False
+    elif node1.val != node2.val:
+        return False
+    else:
+        return compareTreesHelper(node1.left, node2.left) and compareTreesHelper(node1.right, node2.right)
+```",3.0,17.235568706993945
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We will solve this problem using the Inorder traversal of the binary search tree.
+
+1. Traverse the BST using Inorder traversal, and at each node, compare its value with the previous node.
+2. If the previous node's value is greater than the current node's value, it means they are swapped. So, mark the first such node as `first` and the second such node as `second`.
+3. After completing the Inorder traversal, swap the values of the `first` and `second` nodes.
+4. This approach is implemented in all four languages: C++, Java, Python, and JavaScript.
+
+Note that the TreeNode class should be defined for each implementation as it's not provided in the problem statement.","```python
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def recoverTree(root):
+    first = second = None
+    prev = None
+    stack = []
+    
+    while root or stack:
+        while root:
+            stack.append(root)
+            root = root.left
+        
+        node = stack.pop()
+        
+        if prev and node.val < prev.val:
+            if not first:
+                first = prev
+            second = node
+        prev = node
+        
+        root = node.right
+    
+    first.val, second.val = second.val, first.val
+
+# Example usage
+root = TreeNode(1)
+root.left = TreeNode(3)
+root.right = TreeNode(2)
+
+recoverTree(root)
+
+print(""Left -> Right:"", end="" "")
+def inorder(root):
+    if root:
+        inorder(root.left)
+        print(root.val, end="" "")
+        inorder(root.right)
+
+inorder(root)
+
+```",4.0,19.03482669100049
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm follows a simple recursive approach to determine if a given binary tree is a valid Binary Search Tree (BST). The key idea is to maintain a range for each node, which is defined by the minimum and maximum values that the node's value should be within. For example, the root node's value should be in the range of (-Infinity, Infinity). When traversing to the left child, the maximum value for the range should be updated to the parent's value, and for traversing to the right child, the minimum value for the range should be updated to the parent's value. The algorithm continues recursively in this manner.
+
+A helper function, `isValidBSTHelper`, is defined and initialized with the root and the range (-Infinity, Infinity). If the node is `null`, it means that we have reached a leaf node and it should return `true`. If the value of the node is not within the specified range, it means that the node does not meet the BST requirement and the helper function should return `false`. If the node is valid, then the helper function proceeds to check for valid BSTs in its left and right subtrees with the updated range.","```python
+class TreeNode:
+    def __init__(self, value=0, left=None, right=None):
+        self.value = value
+        self.left = left
+        self.right = right
+
+def isValidBSTHelper(node, min_val=float('-inf'), max_val=float('inf')):
+    # Base case: If node doesn't exist (null), it's technically a valid BST.
+    if not node:
+        return True
+
+    # Check that the current value lies within its defined range, which we set up at initialization.
+    if min_val > node.value or node.value < max_val:
+        return False
+
+    # Update range bounds based on the current node's value for its children nodes
+    if node.left:
+        is_left_valid = isValidBSTHelper(node.left, min_val, node.value)
+    else:
+        is_left_valid = True
+
+    if node.right:
+        is_right_valid = isValidBSTHelper(node.right, node.value, max_val)
+    else:
+        is_right_valid = True
+
+    return is_left_valid and is_right_valid
+
+def isValidBST(root):
+    return isValidBSTHelper(root)
+
+# Example usage
+# Create a valid BST
+root = TreeNode(5)
+root.left = TreeNode(3)
+root.right = TreeNode(7)
+root.left.left = TreeNode(2)
+root.left.right = TreeNode(4)
+root.right.left = TreeNode(6)
+root.right.right = TreeNode(8)
+
+print(isValidBST(root))  # Output: True
+
+# Create an invalid BST
+root_invalid = TreeNode(5)
+root_invalid.left = TreeNode(7)
+root_invalid.right = TreeNode(3)
+
+print(isValidBST(root_invalid))  # Output: False
+```",3.0,20.356282938999357
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a dynamic programming approach (2D DP) to solve this problem. The algorithm checks whether the s3[position] is equal to s1 or s2 in the same dp[position]. If so, we take the value of the previous dp[i-1] or dp[j-1] accordingly if the characters match. For the base case, we start with initializing dp[0][0] to true since two empty strings can form an empty s3.
+
+At the end of the iterations, the last element in the dp matrix (i.e. dp[m][n]) will represent whether s3 can be formed by an interleaving of s1 and s2.","```
+def is_interleave(s1, s2, s3):
+    if len(s1) + len(s2) != len(s3):
+        return False
+    
+    dp = [[False] * (len(s2) + 1) for _ in range(len(s1) + 1)]
+    
+    dp[0][0] = True
+    for i in range(1, len(s1) + 1):
+        if s1[i - 1] == s3[i - 1]:
+            dp[i][0] = dp[i - 1][0]
+        else:
+            break
+    for j in range(1, len(s2) + 1):
+        if s2[j - 1] == s3[j - 1]:
+            dp[0][j] = dp[0][j - 1]
+        else:
+            break
+    
+    for i in range(1, len(s1) + 1):
+        for j in range(1, len(s2) + 1):
+            if s1[i - 1] == s3[i + j - 1]:
+                dp[i][j] = dp[i-1][j]
+            if s2[j - 1] == s3[i + j - 1]:
+                dp[i][j] = dp[i][j] or dp[i][j-1]
+    
+    return dp[-1][-1]
+
+# Test cases
+print(is_interleave(""aabcc"", ""dbbca"", ""aadbbcbcac"")) # True
+print(is_interleave(""aabcc"", ""dbbca"", ""aadbbbaccc"")) # False
+```",4.0,21.853791247005574
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is based on dynamic programming. We create an array `dp` of length `n + 1`, with `dp[0]` and `dp[1]` equal to 1, which corresponds to the cases of 0 and 1 node respectively. Next, we iterate from 2 to `n`, and for each value `i`, we iterate from 0 to `i` and accumulate `dp[j] * dp[i - j - 1]` in `dp[i]`. This process represents the number of structurally unique BSTs for the left subtree and right subtree for each possible node arrangement of the BST. At the end, `dp[n]` represents the number of structurally unique BSTs with precisely n nodes.","```
+def numTrees(n):
+    dp = [0] * (n + 1)
+    dp[0] = dp[1] = 1
+    for i in range(2, n + 1):
+        for j in range(i):
+            dp[i] += dp[j] * dp[i - j - 1]
+    return dp[n]
+
+print(numTrees(3)) # Output: 5
+```",5.0,14.10419926099712
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a recursive one. It starts by iterating from `start` to `end`. For every value `i`, it generates left and right subtrees by calling itself recursively with the modified start and end values,  i.e., `generateTrees(start, i - 1)` for the left subtree and `generateTrees(i + 1, end)` for the right subtree. It then creates new nodes with the value `i` and combinations of left and right subtrees, adding the newly created nodes to the `trees` list.
+
+Finally, the function returns the list of trees when the recursive calls end.","```
+class TreeNode:
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+def generateTrees(start, end):
+    if start > end:
+        return [None]
+
+    trees = []
+    for i in range(start, end + 1):
+        left_trees = generateTrees(start, i - 1)
+        right_trees = generateTrees(i + 1, end)
+
+        for left_tree in left_trees:
+            for right_tree in right_trees:
+                node = TreeNode(i)
+                node.left = left_tree
+                node.right = right_tree
+                trees.append(node)
+
+    return trees
+
+# Example usage:
+print(generateTrees(2, 4))
+```",5.0,19.285677013001987
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm simply performs an inorder traversal on the given binary tree. An inorder traversal goes as follows: 
+
+1. Traverse the left subtree, and call the function recursively for the left child.
+2. Visit the root.
+3. Traverse the right subtree, and call the function recursively for the right child.
+
+This process is implemented by defining a helper function (`inorderTraversalHelper`) that takes a node and a `result` list (or vector in C++), and appends the node's value to the `result` list according to the inorder traversal order. The main `inorderTraversal` function initializes the result list and calls the helper function with the root of the tree. At the end, `inorderTraversal` returns the result list containing the values of the nodes in inorder traversal order.","```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def inorderTraversalHelper(node, result):
+    if node is not None:
+        inorderTraversalHelper(node.left, result)
+        result.append(node.value)
+        inorderTraversalHelper(node.right, result)
+
+def inorderTraversal(root):
+    result = []
+    inorderTraversalHelper(root, result)
+    return result
+```",4.0,17.29096603699145
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a Depth-First Search algorithm to explore all possible configurations of the IP address. The function takes in the input string (s), the starting index (start), the partially constructed IP address (ip), and the current part count (part).
+
+In each call to the function, we try to add one part to the IP address. If 4 parts have been added and we have reached the end of the input string, we have found a valid IP address and add it to the result list.
+
+The algorithm iterates through the string s, starting at the current index. It keeps track of the current number (0-255) being constructed by multiplying the current number by 10 and adding the current digit. If the current number is greater than 255, we break the iteration.
+
+We then call the dfs function recursively, with the current index incremented by one, the current IP appended with the current character and a dot, and incrementing part by 1. If the current number is 0 (which indicates a leading zero), we also break the iteration.
+
+This process is repeated for all valid parts and combinations, eventually forming all possible valid IP addresses.","```python
+def restoreIpAddresses(s):
+    def dfs(start, ip, part):
+        if len(ip.split('.')) == 4:
+            if start == len(s) and (len(ip) <= 15 or not s[start:]):
+                result.append('.'.join(ip))
+                return
+        for end in range(start + 1, min(start + 3, len(s) + 1)):
+            curr = int(s[start:end])
+            if curr > 255:
+                break
+            if start != end and s[start] == '0':
+                break
+            dfs(end, ip + '.' + str(curr), part + 1)
+
+    result = []
+    dfs(0, '', 0)
+    return result
+
+# Example usage:
+print(restoreIpAddresses(""25525511135""))
+```",3.0,17.35535958901164
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm creates a dummy node and connects it to the head of the linked list. It then iterates through the list, reversing the nodes from position `left` to `right`. It maintains pointers `pre` and `cur` to accomplish this. During each iteration, it temporarily stores the next node using a pointer `t`, then reverses the connections between the nodes.
+
+This process is repeated for all languages; the only differences in implementation are syntax-related. 
+
+In C++, use pointers and ""->"" to access the next node. In Java and Python, we use dot notation to access the next attribute. In JavaScript, we also use dot notation and ""==="" for equality comparison between left and right.","```
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next_node = None
+
+def reverseBetweenList(head=None, left=0, right=None, dummy_prev=Node(""dummy"")): 
+    if not head or left > right or (right is not None and right < left): return dummy_prev.next
+    
+    cur = dummy_prev
+    pre = dummy_prev
+    
+    while True:
+        next_node_in_range = cur.next_node if left <= right else None
+        
+        t = next_node_in_range.next_node 
+        reverseNodeConnections(cur, pre, t)
+        
+        cur = next_node_in_range if left <= right else dummy_prev.next_node  
+        left, right = left+1, right-1 
+        
+        if not cur: return dummy_prev.next_node
+
+def reverseNodeConnections(cur, pre, t):
+    pre.next_node = t
+    cur.next_node = pre
+```",3.0,18.28369920300611
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use dynamic programming (DP) to solve this problem. The `dp` array is of size `n+1`, where `n` is the length of the input string `s`. `dp[i]` stores the number of ways to decode the substring `s[0:i]`.
+
+Initialize `dp[0]` to 1 because there is always one way to decode an empty string.
+
+For each character in the string `s`, consider its corresponding one-digit and two-digits representations. If the one-digit representation is valid (>=1), we can increment `dp[i]` by `dp[i-1]`, which means one more way to decode the string by using the one-digit representation of the current character. If the two-digits representation is valid (>=10 and <=26), we can increment `dp[i]` by `dp[i-2]`, meaning one way to decode the string by using the two-digits representation of the current character.
+
+After we finished iterating through the string `s`, `dp[n]` will store the number of ways to decode the entire string.","```python
+def numDecodings(s):
+    if not s or s[0] == '0':
+        return 0
+    
+    n = len(s)
+    dp = [0]*(n+1)
+    
+    dp[0] = 1
+    dp[1] = 1
+    
+    for i in range(2, n+1):
+        if s[i-1] != '0':
+            dp[i] += dp[i-1]
+        
+        if '10' <= s[i-2:i] <= '26':
+            dp[i] += dp[i-2]
+    
+    return dp[n]
+
+# Test the function
+print(numDecodings(""226""))  # Output: 3
+```",4.0,16.644005119000212
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm first sorts the given array, and then it generates all possible subsets. For each subset, it checks if it already exists in the result set. If not, it adds the subset to the result set.
+
+The algorithm uses a backtracking approach. It starts with an empty subset and iteratively adds elements from the input array to the subset. It keeps track of the starting index to avoid creating duplicate subsets.
+
+In the C++ and Java implementations, a `set` data structure is used to store unique subsets. In the Python implementation, Python's `set` is used along with itertools' `combinations` function to achieve the same result. In the JavaScript implementation, a `Set` object is used, but as it doesn't handle array comparisons properly, each subset is converted into a JSON string to compare the string representation of subsets.
+
+At the end, the function returns the result set, converted into the desired format (list of lists or vector of vectors).","```python
+def subsets(nums):
+    nums.sort()
+    def backtrack(start, path):
+        result.add(tuple(path))
+        for i in range(start, len(nums)):
+            if i > start and nums[i] == nums[i - 1]:
+                continue
+            backtrack(i + 1, path + [nums[i]])
+    
+    result = set()
+    backtrack(0, [])
+    return list(map(list, result))
+
+print(subsets([1,2,3]))
+```",5.0,16.19797573098913
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm generates an n-bit gray code sequence by following the simple bitwise operation:
+
+1. Loop through all numbers from 0 to 2^n - 1.
+2. For each number i, calculate the gray code value by performing the bitwise XOR operation (i ^ (i >> 1))
+3. Add the gray code value to the result list or vector.
+
+The algorithm has a time complexity of O(2^n) which is the size of the output sequence. The space complexity is also O(2^n), as we store the sequence in a list or vector.","```python
+def next_gray(current, bits):
+    return current ^ ((1 << bits) - 1)
+
+def generate_gray_codes(bits):
+    gray = []
+    for i in range(2**bits):
+        # Calculate the Gray code value by performing bitwise XOR operation
+        next_code = next_gray(i, bits)
+        gray.append(next_code)
+    
+    return gray
+
+print(generate_gray_codes(4))  # Output: [0, 1, 3, 2, 6, 7]
+print(generate_gray_codes(5))  # Output: [0, 1, 3, 2, 6, 7, 11, 12, 14, 13]
+```",3.0,15.016299707000144
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use a two-pointer approach to merge nums1 and nums2 in reverse order. Initialize three pointers i, j, and k pointing to the last elements of nums1, nums2, and the merged nums1 array respectively.
+
+Iterate in a while loop until i and j are both less than 0. Compare the values of nums1[i] and nums2[j]. If nums1[i] is greater, assign nums1[i] at position k in nums1, decrement i and k. Otherwise, assign nums2[j] at position k in nums1, and decrement j and k. This process continues for all elements in nums2.
+
+After the loop, if there are still elements remaining in nums2 (j >= 0), copy the remaining elements of nums2 to nums1. In this way, we merge nums1 and nums2 in non-decreasing order.","```
+def merge(nums1, m, nums2, n):
+    i = m - 1
+    j = n - 1
+    k = len(nums1) - 1
+    
+    while i >= 0 and j >= 0:
+        if nums1[i] > nums2[j]:
+            nums1[k] = nums1[i]
+            i -= 1
+        else:
+            nums1[k] = nums2[j]
+            j -= 1
+        k -= 1
+
+    # Copy remaining elements from nums2 to nums1
+    while j >= 0:
+        nums1[k] = nums2[j]
+        j -= 1
+        k -= 1
+        
+    return nums1
+```",4.0,17.414308938008617
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm works by recursively dividing the strings into smaller substrings and checking if the substrings from s1 can be rearranged into the corresponding substrings of s2. The base case is when both strings (s1, and s2) are equal. If the lengths of the strings are different or the characters are different, then the function returns false. Then, we iterate through the length of strings, dividing the strings into smaller substrings and checking if these substrings can be rearranged to form the scrambled string. We check for both possible arrangements of the substrings, i.e., same order and reverse order, invoking the same function recursively for each combination.","```python
+def can_rewrite(s1, s2):
+    def helper(i, j):
+        # Base case: if lengths are unequal or strings differ, return False
+        if i >= len(s1) or j >= len(s2) or (i < len(s1) and j < len(s2) and s1[i] != s2[j]):
+            return False
+        
+        # Recursive calls for remaining substrings in both forward and reverse order
+        if (i == len(s1) - 1 and j == len(s2) - 1) or \
+           helper(i + 1, j + 1) or \
+           helper(i + 1, j):
+            return True
+        
+        # If no match found in any position, return False
+        return False
+    
+    return helper(0, 0)
+
+# Example usage with test cases
+print(can_rewrite(""gbcda"", ""adcbg""))  # Expected Output: True
+print(can_rewrite(""abcd1234"", ""1234abcd""))  # Expected Output: True
+print(can_rewrite("""", """"))  # Edge case for empty strings, expected output: True
+print(can_rewrite(""abc"", ""def""))  # Expected Output: False (different lengths and characters)
+print(can_rewrite(""a"", ""b""))  # Edge case with single-character string, expected output: True
+```",3.0,24.404213210000307
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a stack to keep track of indices of increasing heights. The height-array is updated every row to add the height of the previous row if the cell value is '1', else it is set to 0. Every time a smaller height is encountered than the top of the stack, we pop the top of the stack and calculate the area using that height (popped value) and the width (current index minus the index below the top of the stack minus 1), updating maxArea with the new maximum value. 
+
+This is done for all the rows of the matrix, and finally, the maxArea is returned.","```
+def max_area(matrix):
+    if not matrix:
+        return 0
+
+    rows = len(matrix)
+    cols = len(matrix[0])
+    height_array = [0] * (cols + 1)
+    stack = []
+    maxArea = 0
+    current_index = 0
+    top_index = -1
+
+    for row in range(rows):
+        for col in range(cols):
+            if matrix[row][col] == '1':
+                height_array[col] += 1
+            else:
+                height_array[col] = 0
+
+        while stack and height_array[stack[-1]] < height_array[current_index]:
+            top_index = stack.pop()
+            area = (current_index - stack[-1] - 1) * height_array[top_index]
+            maxArea = max(maxArea, area)
+
+        while current_index < cols and height_array[current_index] != 0:
+            stack.append(current_index)
+            current_index += 1
+
+    return maxArea
+```",3.0,17.054116375002195
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm utilizes a stack to keep track of the indices of the heights array. It starts iterating through the array, appending a zero at the end to ensure the last bar is considered. When a higher bar is found, it is pushed onto the stack, and if a lower bar is found, it calculates the area of the bar under the current top of the stack considering the width between the current bar and the next lowest bar in the stack, storing the highest area found.
+
+This algorithm has a time complexity of O(n) as it iterates through the heights only once, resulting in optimal performance.","```python
+def maxArea(heights):
+    n = len(heights)
+    heights.append(0)  # append a zero at the end to consider last bar
+    stack = []
+    
+    max_area = 0
+    i = 0
+    
+    while i < n:
+        if not stack or heights[i] >= heights[stack[-1]]:
+            stack.append(i)
+            i += 1
+        else:
+            top_of_stack = stack.pop()
+            
+            width = i - stack[-1] - 1 if stack else i
+            max_area = max(max_area, height * width for height in [heights[top_of_stack], heights[stack[-1]]])
+    
+    return max_area
+
+# Example usage:
+print(maxArea([2, 1, 5, 6, 2, 3])) # Output: 10
+```",3.0,15.117623603000538
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm to delete all duplicates in a sorted linked list simply iterates through the list and compares the value of the current node with the value of the next. If both values are the same, it means that there is a duplicate, so the current node's ""next"" pointer is updated to point to the node after the duplicate. If the values are different, the algorithm continues iterating to the next node. The process continues until reaching the end of the list. Since the linked list is already sorted, this algorithm guarantees that duplicates will appear consecutively, allowing for their removal in linear time.","```python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+def removeDuplicates(head):
+    if head is None: return head   # base case check: empty or singleton list
+    
+    current_node = head           # initialize first node pointer
+    
+    while current_node.next is not None:  # continue till end of list (last node)
+        temp_node = current_node       # create a temporary node for next comparison
+        
+        while temp_node.next is not None:   # traverse as long as there are duplicates to compare with
+            if temp_node.value == current_node.value:    # found duplicate
+                # find non-duplicate node and point current pointer's next attribute towards it
+                current_node.next = temp_node.next
+            else: 
+                temp_node = temp_node.next   # move to next non-duplicate if exists, or end of list otherwise
+        
+        current_node = current_node.next    # skip duplicates by moving pointer up
+    
+    return head    # final linked list after removing all duplicate nodes is returned as answer
+```",3.0,18.453575152001576
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a dummy node to simplify the handling of the head node of the linked list. We declare two pointers: `prev` and `curr` which are pointers to the previous and current nodes, respectively. 
+
+The algorithm iterates through the list with the current pointer. If the current node's value is equal to the next node's value, we continue moving the current pointer along the duplicate values. Once we reach the end of duplicates, we check if the previous node's next pointer is pointing to the current node. If it is, it means there were no duplicates (prev and curr are consecutive), so we move the `prev` pointer to the current node. Otherwise, we set `prev.next` to `curr.next` to skip the duplicates. 
+
+Finally, we move the current pointer to the next node, and repeat the process. The resulting list will have all duplicates removed, and the changes will persist as the dummy node is used to reference the head of the modified list.","```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def remove_duplicates(head: ListNode) -> ListNode:
+    if not head:
+        return None
+    
+    dummy = ListNode(0)
+    dummy.next = head
+    prev = dummy
+    curr = dummy.next
+    
+    while curr:
+        if curr.val == prev.val:
+            next_node = curr.next
+            while next_node and next_node.val == curr.val:
+                next_node = next_node.next
+            
+            prev.next = next_node
+            curr = next_node
+        else:
+            prev = curr
+            curr = curr.next
+    
+    return dummy.next
+
+# Test the function
+head = ListNode(1)
+head.next = ListNode(2)
+head.next.next = ListNode(3)
+head.next.next.next = ListNode(2)
+head.next.next.next.next = ListNode(1)
+
+new_head = remove_duplicates(head)
+
+while new_head:
+    print(new_head.val, end="" "")
+    new_head = new_head.next
+
+print()
+```",4.0,17.685228971007746
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is based on a modified binary search. We start by setting two pointers named `left` and `right` at the first and last element of the array, respectively. We then enter a loop, which continues until the `left` pointer is less than or equal to the `right` pointer.
+
+Inside the loop, we first calculate the middle index `mid` using the `left` and `right` pointers. If the middle element of the array is equal to the target, we return true, indicating that the target is found.
+
+If the middle element is equal to the left element, we increment the `left` pointer. If the middle element is greater than the left element, we check if the target is within the left and middle elements. If it is, we set the `right` pointer to the middle index minus one. Otherwise, we set the `left` pointer to the middle index plus one.
+
+If the middle element is still smaller than the left element, we then check if the target is within the middle and right elements. If it is, we set the `left` pointer to the middle index plus one. Otherwise, we set the `right` pointer to the middle index minus one.
+
+After the loop, we return false if the target is not found in the array.","```python
+def modified_binary_search(arr, target):
+    if not arr:
+        return False
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return True
+        elif arr[left] <= arr[mid]:
+            if arr[left] <= target and target < arr[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:
+            if arr[mid] < target and target <= arr[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return False
+```",4.0,18.669173656002386
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a two-pointer technique. The variable `i` represents the pointer to the position in the array where the next unique element will be placed. For each element in the input array, we check if either `i < 2` (meaning we haven't encountered 2 unique elements yet) or the current element (`num`) is greater than the element in the array at index `i - 2` (this condition ensures that the current element appears at most twice in the array). If either of these conditions are true, we place the current element at index `i` and increment `i`. The function returns the value of `i` at the end, which represents the length of the modified array after removing duplicates.","```python
+def remove_duplicates(nums):
+    i = 0
+    for num in nums:
+        if (i < 2) or (num > nums[i - 2]):
+            nums[i] = num
+            i += 1
+    return i
+```",5.0,12.62425367499236
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            For each of the implementation above, we use a Depth-First Search (DFS) based algorithm to traverse the grid board. The DFS function takes the current cell index i and j and the index of the character in the input word that we are looking for (k).
+
+The base cases are:
+- If the cell indexes i or j are out of boundaries, or the board[i][j] character does not match word[k], return false.
+- If k (current character index) is equal to word.length - 1, we find the word in the grid, so return true.
+
+For each cell, we run the DFS function with the given input parameters. If DFS returns true (found the word), the whole function will return true.","```python
+def exist(board, word):
+    def dfs(i, j, k):
+        if i < 0 or i >= len(board) or j < 0 or j >= len(board[0]) or board[i][j] != word[k]:
+            return False
+        if k == len(word) - 1:
+            return True
+        
+        temp = board[i][j]
+        board[i][j] = '#'
+        
+        found = dfs(i + 1, j, k + 1) or dfs(i - 1, j, k + 1) or dfs(i, j + 1, k + 1) or dfs(i, j - 1, k + 1)
+        
+        board[i][j] = temp
+        
+        return found
+    
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            if dfs(i, j, 0):
+                return True
+                
+    return False
+```",5.0,17.846905742000672
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Calculate the number of subsets in the power set (2^n) using bit manipulation.
+2. Loop through all numbers from 0 to 2^n - 1.
+3. For each number, loop through its bits, and if the bit is set (1), include the corresponding element from the input array in the current subset.
+4. Add the current subset to the result list.
+5. After the loops finish, return the result list containing all subsets.","```
+def generate_subsets(n, input_array):
+    result_list = [[]]
+    
+    for i in range(1, 2**n):
+        binary_rep = bin(i)[2:].zfill(n)
+        
+        subset = []
+        for j in range(n):
+            if binary_rep[j] == '1':
+                subset.append(input_array[j])
+        
+        result_list.append(subset + [x for x in result_list[-1] if x not in subset])
+    
+    return result_list
+
+input_array = [1, 2, 3]
+n = len(input_array)
+print(generate_subsets(n, input_array))
+```",3.0,17.88665394099371
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a backtracking approach to generate all possible combinations of k numbers out of the range [1, n]. We create a helper function called `backtrack` that recursively generates combinations. In this helper function, we have a base case where if the size of the current combination is equal to k, we add it to the result. Otherwise, we iterate through the numbers from the start index to n, add the current number to the current combination, and make a recursive call with an incremented start index. After the call, we ""undo"" the decision by removing the number from the current combination (backtracking).
+
+The main function initializes an empty result list, calls the `backtrack` function with a start index of 1 and an empty current combination list, and then returns the result list.","```python
+def backtrack(start_index, current_combination, result, k):
+    if len(current_combination) == k:
+        result.append(list(current_combination))
+        return
+    
+    for i in range(start_index, n + 1):
+        current_combination.append(i)
+        backtrack(i + 1, current_combination, result, k)
+        current_combination.pop()
+
+def combination_sum(n, k):
+    if k > n:
+        return []
+    
+    result = []
+    backtrack(1, [], result, k)
+    
+    return result
+
+n = 5
+k = 3
+print(combination_sum(n, k))
+```",3.0,15.946051899998565
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a sliding window approach to find the minimum window substring. We use two pointers, `left` and `right`, to represent the current window. 
+
+1. Initialize an unordered_map or dictionary for `need` to store characters and their counts in `t`, and another for `window` to store characters and their counts in the current window.
+2. Initialize `left` and `right` pointers, `valid` counter for keeping track of characters satisfying the criteria, and `start` and `length` for holding the answer substring information.
+3. Iterate through the string `s` using the `right` pointer, and:
+    - If the current character exists in the `need` map, update the count of the character in the `window` map, and increment `valid` if the count in the window is less than or equal to the count in need.
+4. Check the validity by comparing `valid` with the length of `t`.
+    - If valid, update the answer substring's `start` and `length` if the current window's length is less than the current minimum.
+    - Then, increment the `left` pointer to slide the window until the current character count in the window goes below the count in `need`. Update the `valid` counter accordingly.
+5. Return the answer substring, or empty string if no window was found.","```python
+from collections import Counter
+def minWindow(s, t):
+    if not s or not t: return ''  # Edge case check
+    need = dict()
+    window = dict()
+    for i in range(len(t)):
+        if (t[i] in need and need[t[i]] > 0) :
+            need[t[i]] -= 1
+        else:
+            return ''
+    
+    left, right = 0, 0
+    valid = 0
+    start, length = -1, float('inf') # Edge case check for no window found
+    while right < len(s):
+        c = s[right]
+        
+        if (c in need and need[c] > 0) :
+            window[c] = window.get(c,0) + 1
+            
+        # If all characters are included check the validity of current Window   
+        while valid == len(t):
+            if (right - left + 1 < length):  
+                start ,length = left, right - left + 1
+            c_prev = s[left]
+            if (c_prev in need and window[c_prev] >0) :
+                window[c_prev] -= 1
+            else:
+                return ''
+            
+            left += 1   
+        right += 1   # Slide the Window incrementing Right pointer
+        
+    if start == -1: return '' # Edge case check for no window found at all
+    else : return s[start:length]
+```",3.0,23.658366016010405
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses binary search on an m x n matrix.
+
+Firstly, the number of rows and columns (m and n) are computed. Then, we initialize the left and right pointers (l and r).
+
+In each step of the binary search, we calculate the middle index (mid) and get the corresponding value (mid_val) in the matrix. To get the value in the matrix, we divide mid by n and take the remainder.
+
+We then compare the mid_val with the target. If it is equal to the target, we return true. If it's less than the target, we move the left pointer to the next position (mid + 1). Otherwise, we move the right pointer (mid - 1).
+
+If the search space has been fully explored and the target is not found, we return false.","```
+def searchMatrix(matrix, target):
+    if not matrix or not matrix[0]:
+        return False
+    
+    m = len(matrix)
+    n = len(matrix[0])
+    
+    l, r = 0, (m * n) - 1
+    
+    while l <= r:
+        mid_index = (l + r) // 2
+        mid_val = matrix[mid_index // n][mid_index % n]
+        
+        if mid_val == target:
+            return True
+        elif mid_val < target:
+            l = mid_index + 1
+        else:
+            r = mid_index - 1
+            
+    return False
+```",5.0,17.096055771995452
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Iterate over the matrix, marking the first element of the row and column for every 0 encountered.
+2. Set a flag if the first row or the first column has a 0.
+3. Iterate over the matrix, ignoring the first row and first column. Set the element to 0 if the corresponding first row or column is marked.
+4. Finally, set the first row and column to 0 if their flags are set.","```python
+def solve(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0])
+    
+    # Flag first row and column if zero present
+    flag_row = False
+    flag_col = False
+    
+    # Mark first element of each row and column for every 0 encountered
+    mark_rows = [False] * rows
+    mark_cols = [False] * cols
+    
+    for i in range(rows):
+        for j in range(cols):
+            if matrix[i][j] == 0:
+                mark_rows[i] = True
+                mark_cols[j] = True
+                
+                # Set flags if first row or column has a 0
+                if i == 0:
+                    flag_row = True
+                if j == 0:
+                    flag_col = True
+                    
+    # Iterate over matrix, ignoring the first row and first column. 
+    # Set the element to 0 if the corresponding first row or column is marked.
+    for i in range(1, rows):
+        for j in range(1, cols):
+            if mark_rows[i] or mark_cols[j]:
+                matrix[i][j] = 0
+                
+    # Finally, set the first row and column to 0 if their flags are set
+    if flag_row:
+        matrix[0] = [0] * cols
+    if flag_col:
+        for i in range(rows):
+            matrix[i][0] = 0
+            
+    return matrix
+
+# Example usage:
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+print(solve(matrix))
+```",4.0,18.48891056800494
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm used is dynamic programming. We create a 2D table dp with dimensions (m+1) x (n+1), where m is the length of word1 and n is the length of word2. Each cell dp[i][j] represents the minimum number of operations required to convert word1[0...i-1] to word2[0...j-1].
+
+For each cell, we have the following conditions:
+1. If either i or j is 0, it means one of the strings is empty, so the minimum number of operations needed is the length of the non-empty string (i or j).
+2. If the current characters of the two strings are equal (word1[i-1] == word2[j-1]), we don't have to do anything, so dp[i][j] = dp[i-1][j-1].
+3. If the current characters are different, we take the minimum of the following and add 1:
+    a. dp[i-1][j]: Delete operation
+    b. dp[i][j-1]: Insert operation
+    c. dp[i-1][j-1]: Replace operation
+
+After filling the table, the minimum number of operations will be at dp[m][n].","```python
+def min_operations(word1, word2):
+    m = len(word1)
+    n = len(word2)
+    dp = [[0 for _ in range(n+1)] for _ in range(m+1)]
+    
+    for i in range(m+1):
+        dp[i][0] = i
+    for j in range(n+1):
+        dp[0][j] = j
+        
+    for i in range(1, m+1):
+        for j in range(1, n+1):
+            if word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            else:
+                dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                
+    return dp[m][n]
+
+print(min_operations(""intention"", ""execution""))
+```",4.0,17.8994056310039
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a stack to keep track of the directory hierarchy. It starts by splitting the input string by '/', iterating over each part, and processing them according to the following rules:
+1. If the part is empty or ""."", skip it.
+2. If the part is "".."", pop off the top element of the stack (if it's non-empty).
+3. Otherwise, push the part onto the stack.
+
+After processing all parts, concatenate the elements in the stack separated by '/' and return the canonical path.
+
+The implementations are very similar across the four languages, with differences stemming primarily from the syntax and conventions of each language.","```python
+def simplify_path(path):
+    stack = []
+    parts = path.split('/')
+    
+    for part in parts:
+        if not part or part == '.':
+            continue
+        elif part == '..':
+            if stack:
+                stack.pop()
+        else:
+            stack.append(part)
+            
+    return '/' + '/'.join(stack)
+
+# Example usage:
+print(simplify_path(""/home/""))  # /home/
+print(simplify_path(""/../""))     # /
+print(simplify_path(""/home//foo/""))   # /home/foo
+```",5.0,13.859365003998391
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            This problem can be solved using dynamic programming. The number of ways to reach the top can be calculated by finding the sum of the ways to reach the previous two steps. We start with the base cases where `n` is 1 or 2, and then iteratively build up the solution. In each iteration, we update `a` and `b` with the new number of ways to reach steps `n-2` and `n-1` respectively, and keep calculating the number of ways to reach step `n` using `a + b`. This continues until we reach the top and return the final result.","```python
+def climbStairs(n):
+    if n < 0:
+        raise ValueError(""Input should be a non-negative integer."")
+    elif n == 1:
+        return 1
+    elif n == 2:
+        return 2
+    
+    a, b = 1, 2
+    for _ in range(3, n + 1):
+        a, b = b, a + b
+    
+    return b
+```",4.0,13.695288835995598
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a binary search approach to find the integer square root of the given number `x`. It starts with the smallest possible answer (1) and the largest possible answer (x), updating the ""start"" and ""end"" positions based on whether the current midpoint squared is smaller or larger than x. The integer square root of the number is found when `mid * mid == x`, or when the closest integer (under or equal to x) value has been located. The binary search approach keeps the time complexity at O(log(x)), making it an efficient solution.","```python
+def sqrt_integer(x):
+    if x < 0: return ""Cannot calculate sqrt of negative number""
+    elif x == 0 or (1 <= x and x < 2): return 1
+    
+    start, end = 1, x
+    while abs((start + end) / 2 - x) > 0.0001:
+        if ((start + end) / 2) * ((start + end) / 2) < x: 
+            if int(((start + end) / 2)) ** 2 == x: return int(((start + end) / 2))
+            start = (start + end) / 2
+        else: 
+            if int(((start + end) / 2)) ** 2 > x: 
+                end = (start + end) / 2
+            else:
+                return int(((start + end) / 2))
+    return int(round((start + end) / 2))
+```",3.0,17.777957417987636
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm works as follows:
+1. Initialize an empty result list.
+2. Use `idx` to keep track of the start of the line. `idx` initially starts at 0, i.e., the first word.
+3. Calculate the total number of characters from `idx` to the last word in a line by testing whether adding the next word, with an extra space before it, would exceed `maxWidth`.
+4. Find the number of gaps in the current line. If it is the last line or there is only one word, left-justify the words and pad the remaining space with spaces.
+5. If it's not the last line, distribute spaces as evenly as possible between words: calculate `evenSpaces` and `extraSpaces`, and add an extra space to the left gaps until there are no more `extraSpaces`.
+6. Append the constructed line to the result list and update the `idx` to the start of the next line.
+7. Repeat steps 3 to 6 until reaching the last word.
+8. Return the result list.","```python
+def fullJustify(words, maxWidth):
+    result = []
+    idx = 0
+    
+    while idx < len(words):
+        currentLine = []
+        currentWidth = 0
+        
+        # add words to the current line until it's too wide or there are no more words
+        while idx < len(words) and currentWidth + len(currentLine) + len(words[idx]) <= maxWidth:
+            currentLine.append(words[idx])
+            currentWidth += len(words[idx]) + (len(currentLine) == 1)
+            idx += 1
+        
+        # distribute spaces evenly in the line
+        if idx < len(words):
+            evenSpaces = maxWidth - currentWidth
+            extraSpaces = evenSpaces % (len(currentLine) - 1)
+            gapSize = evenSpaces // (len(currentLine) - 1)
+            
+            line = """"
+            for i, word in enumerate(currentLine[:-1]):
+                line += word + "" "" * (gapSize + (i < extraSpaces))
+            line += currentLine[-1]
+        else:
+            # if there's only one word or it's the last line, left-justify
+            line = "" "".join(currentLine)
+            
+            # add spaces to fill the line up to maxWidth
+            line += "" "" * (maxWidth - len(line))
+        
+        result.append(line)
+    
+    return result
+```",4.0,19.900118350997218
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm initializes an empty result binary string, carry, and two pointers i and j pointing to the last element of strings a and b respectively.
+In each iteration:
+- If i is not out of bounds, add the corresponding binary number to the carry.
+- If j is not out of bounds, add the corresponding binary number to the carry.
+- Append the remainder of dividing carry by 2 to the result binary string (left side).
+- Update carry by dividing it by 2 (integer division).
+
+This process continues until i and j pointers become out of bounds and there is no carry left.
+
+Finally, return the result binary string.","```python
+def add_binary(a, b):
+    result = ''
+    carry = 0
+    i = len(a) - 1
+    j = len(b) - 1
+    
+    while i >= 0 or j >= 0 or carry:
+        total = carry
+        if i >= 0:
+            total += int(a[i])
+            i -= 1
+        if j >= 0:
+            total += int(b[j])
+            j -= 1
+        
+        digit = total % 2
+        carry = total // 2
+        result = str(digit) + result
+    
+    return result
+```",4.0,19.153856831006124
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We start by iterating through the array from the least significant digit (rightmost) to the most significant digit (leftmost). In each iteration, we check whether the digit is less than 9. If the digit is less than 9, increment it and return the incremented array. If the digit is 9, we set it to 0 and continue the loop to the next most significant digit.
+
+After the loop, if we haven't found any digit less than 9, that means we have a number like 9999...9 which needs to be incremented to 10000...0. So we add a 1 at the beginning of the array (the most significant digit). Finally, we return the incremented array.","```python
+def increment_array(arr):
+    result = []
+    carry = 1
+    
+    for num in reversed(arr):
+        if int(num) < 9:
+            result.append(str(int(num) + carry))
+            carry = 0
+        else:
+            result.append('0')
+    
+    if carry == 1:
+        result.insert(0, '1')
+    
+    return ''.join(result)
+```",2.0,19.4611377040128
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm utilizes regular expressions to match the input string against a pattern that defines a valid number. The regular expression in this case has the following meaning:
+
+1. `^`: Start of the string
+2. `[-+]?`: An optional sign, either `+` or `-`
+3. `(`: Start of a group that can be an integer or a decimal
+4. `(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))`: Here, a valid number can either have digits before and after the decimal point or only after the decimal point (or only before the decimal point with an optional decimal delimiter).
+5. `)`: End of the group
+6. `(e[-+]?[0-9]+)?`: An optional scientific notation part, which consists of the letter 'e', followed by an optional sign and at least one digit
+7. `$`: End of the string
+
+The regex pattern is constructed to cover all cases according to the problem's description. The function then uses each language's regex library to match the input string against this pattern, returning `true` if the input string matches and `false` otherwise.","```
+import re
+
+def is_valid_number(input_string):
+    regex = r'^[-+]?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))([eE][-+]?[0-9]+)?$'
+    return bool(re.match(regex, input_string))
+```",4.0,15.628845006009215
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm solves the problem through dynamic programming. It creates a table and fills it by the following rules:
+1. The first element of each row will be the sum of its previous row element and its current value.
+2. The first element of each column will be the sum of its previous column element and its current value.
+3. For all other elements, find the minimum path/components from its top (i-1,j) and left (i,j-1) neighbors, and then add its current value.
+
+At the end of the loop, the bottom right cell contains the minimum path sum from the top left corner to the bottom right corner.","```python
+def minPathSum(grid):
+    m = len(grid)
+    n = len(grid[0])
+    
+    # Initialize the first cell with its value
+    for i in range(1, n):
+        grid[0][i] += grid[0][i-1]
+        
+    # Fill in the table based on the rules provided
+    for i in range(1, m):
+        for j in range(n):
+            if j == 0:
+                grid[i][j] += grid[i-1][j]
+            else:
+                grid[i][j] = min(grid[i-1][j], grid[i][j-1]) + grid[i][j]
+
+    return grid[m-1][n-1]
+
+# Example usage
+grid = [[1,3,1],[1,5,1],[4,2,1]]
+print(minPathSum(grid))  # Output: 7
+
+grid = [[1,2,3],[4,5,6]]
+print(minPathSum(grid))  # Output: 12
+
+grid = [[1,2],[5,6]]
+print(minPathSum(grid))  # Output: 8
+```",3.0,17.1369828619936
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. If the starting point has an obstacle, return 0 as there is no valid path.
+2. Initialize the first cell of the grid as 1 and process the first row and column,
+   setting their values to 1 if the cell is not an obstacle and if the previous cell is not an obstacle.
+3. Iterate through the grid starting from the second row and column, and for each cell, if it's not an obstacle, set its value to the sum of the values of the cells above it and to its left.
+4. Return the value of the bottom-right corner of the grid, which is the number of unique paths.","```python
+def uniquePaths(obstacles):
+    if obstacles[0][0] == 1:
+        return 0
+    
+    row = len(obstacles)
+    col = len(obstacles[0])
+    
+    # Initialize first cell as 1 and process the first row and column
+    for i in range(row):
+        if obstacles[i][0] != 1:
+            break
+        obstacles[i][0] = 1
+    for j in range(col):
+        if obstacles[0][j] != 1:
+            break
+        obstacles[0][j] = 1
+    
+    # Iterate through the grid and set each cell's value as the sum of its two adjacent free cells above it and to its left
+    for i in range(1, row):
+        for j in range(1, col):
+            if obstacles[i][j] == 1:
+                above = obstacles[i-1][j] if i > 0 else 0
+                left = obstacles[i][j-1] if j > 0 else 0
+                obstacles[i][j] = above + left
+                
+    return obstacles[row-1][col-1]
+```",3.0,17.898658111997065
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The idea is to use dynamic programming to solve this problem. We create a 2D array `dp` with dimensions `m` x `n` to store the number of unique paths to reach each cell in the grid.
+
+Initially, we fill out the first row and first column of the `dp` array with 1 since there is only one way to reach any cell in the first row or first column: by moving either right along the first row or down along the first column.
+
+Then, for every other cell in the `dp` array, we can calculate the number of unique paths to that cell by summing the number of unique paths to the cell above it and to the cell to its left. We can do this because the robot can only move down or right, so the paths to the current cell must have come from those two directions.
+
+Finally, we return the value at the bottom-right corner of the `dp` array, which represents the number of unique paths the robot can take to reach the destination.","```python
+def uniquePaths(m, n):
+    dp = [[1 for _ in range(n)] for _ in range(m)]
+    
+    for i in range(1, m):
+        for j in range(1, n):
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1]
+            
+    return dp[m - 1][n - 1]
+
+# Example usage:
+print(uniquePaths(3, 7))
+```",5.0,17.387104470995837
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm first finds the length of the linked list by iterating through it. It then calculates the actual number of rotations needed, considering that if `k` is equal to or larger than the length of the linked list, the same rotation will be repeated. To minimize the rotations, we find the remainder of `k` divided by the length of the list.
+
+Next, we connect the tail of the linked list to the head, forming a circular linked list. Following this, we iterate again through the list and perform the rotations by updating the pointers of the new head and tail. Finally, we break the cycle in the list and return the new head.","```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def rotateRight(head, k):
+    if not head or not head.next or k == 0:
+        return head
+    
+    old_tail = head
+    n = 1
+    while old_tail.next:
+        old_tail = old_tail.next
+        n += 1
+    
+    old_tail.next = head  # connect the tail to head, forming a circular linked list
+    
+    new_length = n - (k % n)
+    
+    for _ in range(new_length - 1):
+        head = head.next
+    
+    new_tail = head
+    while new_tail.next:
+        new_tail = new_tail.next
+    
+    new_tail.next = None
+    
+    return head
+
+# Helper function to print the linked list
+def printList(node):
+    while node:
+        print(node.val, end="" -> "")
+        node = node.next
+    print(""None"")
+
+# Test cases
+head = ListNode(1)
+head.next = ListNode(2)
+head.next.next = ListNode(3)
+head.next.next.next = ListNode(4)
+head.next.next.next.next = ListNode(5)
+
+print(""Original Linked List:"")
+printList(head)
+
+k = 2
+new_head = rotateRight(head, k)
+
+print(""\nRotated Linked List (k ="", k, ""):"")
+printList(new_head)
+```",4.0,20.813743627993972
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses factorials and a list of available numbers to construct the kth permutation. 
+
+First, we precompute the factorials up to n using a loop.
+
+Next, we initialize an array or list of available numbers, from 1 to n.
+
+Then, we iterate from n down to 1, calculating the index of the current number in the available list to be included in the resulting permutation. We can calculate it as follows: `index = (k - 1) // factorials[i - 1]`. 
+
+After, we update the value of k to: `k %= factorials[i - 1]`.
+
+At each step, we append or concatenate the chosen number to the result and remove it from the list of available numbers.
+
+Finally, we return the result as a string.","```python
+def factorial(n):
+    """"""Calculate factorial of an integer n.""""""
+    return 1 if n < 2 else n * factorial(n - 1)
+
+def get_index(k, factorials):
+    """"""Get the index to choose from available numbers up to kth permutation.""""""
+    i = 0
+    while (k >= factorials[i]):
+        k -= factorials[i]
+        i += 1
+    return i
+
+def generate_permutation(k, n):
+    """"""Generate and return the k-th permutation of numbers up to n.""""""
+    result = []
+    available_numbers = [str(i) for i in range(1, n + 1)]
+    
+    while len(available_numbers) > 0:
+        index = get_index(k, factorial_list)
+        chosen_number = available_numbers[index]
+        result.append(chosen_number)
+        available_numbers.pop(index)
+        
+        if k >= factorial_list[index]:
+            k -= factorial_list[index]
+            
+        factorial_list.pop()
+    
+    return ''.join(result)
+
+def main():
+    n = int(input(""Enter the value of n: ""))
+    k = int(input(""Enter the desired index for permutation: ""))
+    
+    # Precompute factorial numbers up to n using a loop.
+    global factorial_list
+    factorial_list = [1]
+    for i in range(2, n + 1):
+        factorial_list.append(factorial_list[-1] * i)
+        
+    print(""Kth permutation: "", generate_permutation(k, n))
+
+if __name__ == ""__main__"":
+    main()
+```",3.0,17.66697046199988
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm initializes an n x n matrix and defines variables to maintain the current top (row), bottom (row), left (column), and right (column) positions. The algorithm then loops through the four sides of the outer square/boundary of the matrix in clockwise order (top row left to right, right column top to bottom, bottom row right to left, left column bottom to top) and fills the elements with the numbers in sequence from 1 to n². After completing a boundary, update the top, bottom, left, and right variables to point to the next inner square/boundary, and repeat the process until every position in the matrix has been filled.","```python
+from collections import deque
+
+def spiral_matrix(n):
+    if not isinstance(n, int) or n < 0:
+        raise ValueError(""Input must be a non-negative integer."")
+    
+    # Initialize matrix and boundaries
+    matrix = [[0 for _ in range(n)] for _ in range(n)]
+    top, bottom, left, right = (0, 0), (n-1, n-1)
+    count = 0
+    
+    while True:
+        # Fill the top row
+        for i in range(left[1], right[1] + 1):
+            matrix[top[0]][i] = count + 1
+            count += 1
+        if left[0] == bottom[0]:
+            break
+        top = (top[0]+1, left[1])
+        
+        # Fill the right column
+        for i in range(top[0], bottom[0] + 1):
+            matrix[i][right[1]] = count + 1
+            count += 1
+        if top[1] == right[1]:
+            break
+        right = (top[0], right[1]+1)
+        
+        # Fill the bottom row
+        for i in range(right[1], left[1]-1, -1):
+            matrix[bottom[0]][i] = count + 1
+            count += 1
+        if left[1] == right[1]:
+            break
+        bottom = (bottom[0]-1, left[1])
+        
+        # Fill the left column
+        for i in range(bottom[0], top[0]-1, -1):
+            matrix[i][left[1]] = count + 1
+            count += 1
+        if top[0] == bottom[0]:
+            break
+        left = (top[0], left[1]+1)
+    
+    return matrix
+```",3.0,21.613916440997855
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm for finding the length of the last word in a string containing multiple words separated by spaces is as follows:
+
+1. Initialize variables for the length of the last word and the tail (i.e., the end) of the input string.
+2. Traverse the string in reverse order to find the start of the last word by checking if a character is a space. Skip all spaces found.
+3. Continue traversing the string in reverse order and record the length of the last word until a space is encountered or the start of the string is reached.
+4. Return the length of the last word.
+
+This algorithm is implemented in each of the given programming languages (C++, Java, Python, and JavaScript) with the appropriate syntax and variable initialization. The functions are named `lengthOfLastWord` for C++, Java, and JavaScript, and `length_of_last_word` for Python.","```python
+def length_of_last_word(input_string):
+    last_word_length = 0
+    position = len(input_string) - 1
+
+    # traverse from right to left until reaching a non-space character
+    while position >= 0 and input_string[position] == ' ':
+        position -= 1
+
+    if position < 0:  # edge case: empty input string or all spaces
+        return last_word_length
+
+    # traverse from the found non-space character to the start of the word, counting characters
+    while position >= 0 and input_string[position] != ' ':
+        last_word_length += 1
+        position -= 1
+
+    return last_word_length
+```",5.0,18.760220996002317
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm to merge the new interval starts by exploring the non-overlapping intervals before the new one as we are given a sorted list of intervals. We add the explored intervals that came before to the result. After that, we continue exploring intervals that overlap with the new interval and continuously merging them. We update the new interval's starting and ending points according to the merging process until no overlapping intervals remain. We add the merged interval to the result list, and finally, we add the rest of the original intervals present after the new interval. The result will be a merged list of intervals. ","```python
+def merge_intervals(intervals):
+    if not intervals:
+        return []
+
+    # Sort the intervals based on their start value
+    intervals.sort(key=lambda x: x[0])
+
+    merged = [intervals[0]]
+
+    for current in intervals[1:]:
+        last_merged = merged[-1]
+
+        # If the current interval overlaps with the last merged one, merge them
+        if current[0] <= last_merged[1]:
+            merged[-1] = [last_merged[0], max(last_merged[1], current[1])]
+        else:
+            # Otherwise, append the current interval to the list of merged ones
+            merged.append(current)
+
+    return merged
+
+# Example usage
+intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]
+print(merge_intervals(intervals))
+```",4.0,18.948810246001813
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm first sorts the intervals based on their start time. Then, it initializes an empty list `result` to store the merged intervals, and adds the first interval to `result`. Next, it iterates through the remaining intervals, comparing the end time of the last interval in `result` to the start time of the current interval. If they overlap (i.e., the end time of the last interval in `result` is greater than or equal to the start time of the current interval), then the end time of the last interval in `result` is updated to the maximum of its own end time and the end time of the current interval. Otherwise, the current interval is added to `result`. The process continues until all intervals have been processed, and `result` contains the merged, non-overlapping intervals covering the input intervals.","```python
+def merge_intervals(intervals):
+    # Sorting based on start time using built-in function with custom comparator
+    intervals = sorted(intervals, key=lambda x: x[0])
+    
+    result = []  # List to store merged non-overlapping intervals
+    result.append(intervals[0])  # Start with the first interval
+    
+    for i in range(1, len(intervals)):
+        last_interval = result[-1]
+        
+        if intervals[i][0] <= last_interval[1]:  # Check overlap condition (end time of previous > start time of current)
+            # Update the end time if a new maximum is found
+            last_interval[1] = max(last_interval[1], intervals[i][1])
+        else:
+            result.append(intervals[i])  # No overlap, add to result list as it stands
+    
+    return result
+
+intervals = [[1,3],[2,6],[8,10],[15,18]]
+print(merge_intervals(intervals))
+```",4.0,18.155702171003213
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates through the `nums` array, keeping track of the maximum reachable index in `maxReach`. In each iteration, it compares the current index `i` with `maxReach`. If `i` is greater than `maxReach`, it means that the last index cannot be reached. Otherwise, it updates the `maxReach` by taking the maximum value between the current `maxReach` and the sum of the current index `i` and the value of `nums[i]`. If the end of iteration is reached, it means that the last index can be reached, so the function returns true.","```python
+def canReach(nums):
+    maxReach = 0
+    for i in range(len(nums)):
+        if i > maxReach:
+            return False
+        maxReach = max(maxReach, i + nums[i])
+    return maxReach >= len(nums)
+```",3.0,15.217214595002588
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates over the matrix in a spiral order. Initialize the indices to keep track of the matrix boundaries. The algorithm goes from left to right, from top to bottom, from right to left, and then from bottom to top. With each iteration, update the matrix boundaries. The process continues until the row and column boundaries cross each other.","```python
+def spiralOrder(matrix):
+    if not matrix or not matrix[0]:
+        return []
+
+    rows, cols = len(matrix), len(matrix[0])
+    visited = [[False] * cols for _ in range(rows)]
+    directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]  # right, down, left, up
+    direction_index = 0
+    row_idx, col_idx = 0, 0
+
+    result = []
+
+    while rows > 0 and cols > 0:
+        result.append(matrix[row_idx][col_idx])
+        visited[row_idx][col_idx] = True
+
+        next_row, next_col = row_idx + directions[direction_index][0], col_idx + directions[direction_index][1]
+
+        if (next_row < 0 or next_row >= rows or
+            next_col < 0 or next_col >= cols or
+            visited[next_row][next_col]):
+            direction_index = (direction_index + 1) % 4
+
+        row_idx += directions[direction_index][0]
+        col_idx += directions[direction_index][1]
+
+    return result
+```",3.0,15.100062598998193
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses the ""Kadane's Algorithm"" approach to find the maximum contiguous subarray sum. It iterates through the given array once and tracks the maximum sum found so far and the current sum.
+
+For each element, we compare the sum of the current_sum with the element itself, and select the maximum of the two. This helps us to decide whether to continue the current contiguous subarray or start a new one from that element. Then, we compare the new current_sum with our global max_sum, and update max_sum if we find a larger value.
+
+In the end, max_sum contains the largest sum of the contiguous subarray.
+
+Time complexity: O(n)
+Space complexity: O(1)","```python
+def max_subarray_sum(arr):
+    if not arr:
+        return None
+
+    current_sum = max_sum = arr[0]
+    
+    for num in arr[1:]:
+        current_sum = max(num, current_sum + num)
+        max_sum = max(max_sum, current_sum)
+
+    return max_sum
+
+# Test cases
+print(max_subarray_sum([-2, 1, -3, 4, -1, 2, 1, -5, 4])) # Output: 6 (from subarray [4,-1,2,1])
+print(max_subarray_sum([0, 2, -1, -3, 5, 4])) # Output: 7 (from subarray [2,-1,-3,5,4])
+print(max_subarray_sum([-1, -2, -3, -4])) # Output: -1
+```",5.0,18.05167368199909
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm recursively places queens on columns and checks if the placement is safe, i.e., no queens are attacking each other. 
+1. Maintain an array `cols` storing the row indices of placed queens. The index in this array represents the column the queen is placed in. This ensures that no two queens are placed in the same column.
+2. Recursively place queens (column-wise).
+3. Check for a safe position for each queen in the current column:
+   a. Check for same row (`cols[i] == row`).
+   b. Check for diagonal attack (`abs(i - col) == abs(cols[i] - row)`).
+4. If the current position is safe, place the queen in the current column at the current row position, and continue to place the next queen.
+5. If all queens are placed, increment the solution count.
+6. If the recursive call finishes, backtrack by removing the queen from the current column and move on to the next row in the same column.
+7. The base case is when the `cols` size equals `n`, meaning all queens have been placed safely; increment the count.
+
+This approach considers all possible configurations for placing the n queens while avoiding visiting invalid configurations. It uses backtracking to explore the state space efficiently. The algorithm finds the number of distinct solutions to the n-queens puzzle.","```
+def totalNQueens(n: int) -> int:
+    def is_safe(cols, row, col):
+        for i in range(len(cols)):
+            if cols[i] == row or abs(i - col) == abs(cols[i] - row):
+                return False
+        return True
+
+    def place_queen(cols, row):
+        if row == n:
+            nonlocal count
+            count += 1
+            return
+        for col in range(n):
+            if is_safe(cols, row, col):
+                cols[row] = col
+                place_queen(cols, row + 1)
+
+    cols = [-1] * n
+    count = 0
+    place_queen(cols, 0)
+    return count
+
+# Test the function
+print(totalNQueens(4))
+```",4.0,16.771419185999548
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses the backtracking approach to solve the N-Queens puzzle. The idea is to place queens one by one in different columns, starting from the leftmost column. When placing a queen, check if that position is safe from all previously placed queens in terms of the horizontal, diagonal, and anti-diagonal directions. If the selected position is safe, move on to the next column and try to place another queen there. If no safe positions are found in the current column, then go back to the previous column and move the queen to another safe position. Repeat this process until all queens are placed in a valid configuration or all possible arrangements have been tried. During the process, whenever we successfully place `n` queens on the board, add that configuration to our result list. Finally, return the list of all unique solutions found.","```
+def solve_n_queens(n):
+    def is_safe(board, row, col):
+        for i in range(row):
+            if board[i][col] == 'Q':
+                return False
+            if col - (row - i) >= 0 and board[i][col - (row - i)] == 'Q':
+                return False
+            if col + (row - i) < n and board[i][col + (row - i)] == 'Q':
+                return False
+        return True
+
+    def place_queens(board, row):
+        if row == n:
+            result.append([''.join(row[:] for row in board)])
+            return
+        for col in range(n):
+            if is_safe(board, row, col):
+                board[row][col] = 'Q'
+                place_queens(board, row + 1)
+                board[row][col] = '.'
+
+    result = []
+    board = [['.' for _ in range(n)] for _ in range(n)]
+    place_queens(board, 0)
+    return [[""."" * i + ""Q"" + ""."" * (n - i - 1) for i in sol] for sol in result]
+
+print(solve_n_queens(4))
+```",3.0,20.56229988198902
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses the binary exponentiation technique, which is a faster method of calculating x^n compared to the naive approach. It relies on the process of repeatedly multiplying the current product by itself and updating it after each iteration. The loop iterates through the bits of the exponent n, from the least significant to the most significant. If the current bit of n is 1, the result is multiplied by the current product. At the end of the loop, the current product is updated by squaring it. This process continues until all bits of the exponent have been processed.
+
+The time complexity of the algorithm is O(log(n)) because the loop iterates through the bits of n, and the number of bits in n is proportional to the logarithm of n. The space complexity is O(1), as the space used by the temporary variables does not depend on the size of n.","```
+def binary_power(base: float, exp: int) -> float:
+    result = 1 if exp > 0 else 0
+    while abs(exp) > 0:
+        if exp & 1: 
+            result *= base
+        base *= base
+        exp >>= 1 
+    return -result if exp < 0 else result
+```",3.0,15.083361994998995
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates through the input array of strings. For each string, create a sorted version of the string as key, and store the original strings as values. Use a data structure like a map or dictionary to store the grouped anagrams in these key-value pairs. The keys will represent the different anagrams, while the values will be lists of the original strings that fit the anagram. Finally, extract the values (lists of anagrams) from the map or dictionary and return them. This works because anagrams will produce the same sorted strings as keys.","```python
+def group_anagrams(strs):
+    def get_sorted_string(s):
+        return """".join(sorted(s))
+        
+    group = {}
+    
+    for s in strs:
+        if get_sorted_string(s) not in group:
+            group[get_sorted_string(s)] = [s]
+        elif get_sorted_string(s) in group:
+            group[get_sorted_string(s)].append(s)
+            
+    return list(group.values())
+```",4.0,17.368522213000688
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates over each layer of the matrix gradually working inwards. For each element in the current layer, it performs a 4-way swap (moving elements from left -> top, bottom -> left, right -> bottom, and top -> right). This moves each element in the layer to its new position after rotation without using any additional memory. The algorithm proceeds with this strategy until it reaches the center of the matrix, ensuring that all elements are correctly rotated.","```python
+def rotate_matrix(matrix):
+    n = len(matrix)
+    
+    for layer in range(n // 2):
+        first, last = layer, n - layer - 1
+        
+        for i in range(first, last):
+            top = matrix[layer][i]
+            
+            # move left -> top
+            matrix[layer][i] = matrix[-i - 1][layer]
+            
+            # move bottom -> left
+            matrix[-i - 1][layer] = matrix[-layer - 1][-i - 1]
+            
+            # move right -> bottom
+            matrix[-layer - 1][-i - 1] = matrix[i][-layer - 1]
+            
+            # move top -> right
+            matrix[i][-layer - 1] = top
+    
+    return matrix
+
+matrix = [[1,2,3],[4,5,6],[7,8,9]]
+print(rotate_matrix(matrix))
+```",4.0,16.295695652006543
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use backtracking to generate permutations. Firstly, we sort the `nums` array to make sure that duplicate numbers are located together. Then, for each recursive backtracking call, we swap the elements in the range `[start, len(nums) - 1]` with `nums[start]`, ignoring already-visited elements by using a `visited` array.
+
+We also skip any element that is equal to the current `start` element to avoid duplicates. After generating a valid permutation by iterating through all indices, we append the current permutation to the result array. When backtracking, we maintain the original order of elements before moving to the next level.
+
+The time complexity of this approach is O(n! * n) since there are n! available permutations and each permutation requires O(n) time to build the solution. The space complexity is O(n) to store the `visited` array and temporary lists.","```python
+from itertools import permutations
+import itertools
+
+def permute(nums):
+    nums.sort()
+    def backtrack(start, path):
+        if start == len(nums) - 1:
+            result.append(path)
+            return
+        visited = [False] * (len(nums) - start)
+        for i in range(start, len(nums)):
+            if i > start and nums[i] == nums[start] and not visited[i-1]:
+                continue
+            if not visited[i]:
+                visited[i] = True
+                backtrack(start + 1, path + [nums[i]])
+                visited[i] = False
+
+    result = []
+    backtrack(0, [])
+    return result
+
+print(permute([1,2,3]))
+```",3.0,16.63649352399807
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses backtracking to generate all possible permutations. It works by swapping the elements in the input array in a recursive manner.
+
+1. The base case is when the index reaches the last element of the array; at this point, we append the current configuration to the ""results"" list.
+2. For each index, we iterate from `index` to the end of the array, performing the following steps:
+    a. Swap `index` and `i` elements.
+    b. Recursively call the helper function with `index + 1`.
+    c. Swap the elements back to their original positions.
+
+This will generate all possible permutations, as it swaps elements in different positions while maintaining the original order in the input array. The termination condition for the recursion is the base case when we reach the end of the array. The complexity of this algorithm is O(N!), as there are N! permutations of an array of N elements.","```python
+def permute(arr):
+    def backtrack(start):
+        if start == len(arr) - 1:
+            results.append(arr[:])
+            return
+        
+        for i in range(start, len(arr)):
+            arr[start], arr[i] = arr[i], arr[start]
+            backtrack(start + 1)
+            arr[start], arr[i] = arr[i], arr[start]
+    
+    results = []
+    backtrack(0)
+    return results
+
+arr = [1, 2, 3]
+print(permute(arr))
+```",5.0,18.343778978000046
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We initialize jumps to count the number of jumps, current_end to keep track of the farthest index we can reach with the current number of jumps, and current_farthest to keep track of the farthest index that can be reached from the current position.
+
+We loop through the array up to the second last element. For each index, we calculate and store the farthest index that can be reached from the current index. If the current index equals the current end, we increment the jumps, as we need one more jump to reach or go beyond the current end, and update the current_end with the current_farthest value.
+
+Finally, we return the number of jumps which represents the minimum number of jumps needed to reach the last index.","```python
+def min_jumps(arr):
+    if len(arr) < 2:
+        return 0
+    
+    jumps = 1
+    current_end = arr[0]
+    current_farthest = arr[0]
+
+    for i in range(1, len(arr)-1):
+        if i == current_end:
+            jumps += 1
+            current_end = current_farthest
+
+        current_farthest = max(current_farthest, i + arr[i])
+
+        if current_farthest >= len(arr) - 1:
+            return jumps
+    
+    return jumps
+```",3.0,15.623163474010653
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            - Initialize `m` and `n` as the lengths of the input string `s` and pattern `p`. Initialize `i`, `j`, `asterisk`, and `match` to 0.
+- Use a `while` loop with a condition of `i < m`. Loop through the input string and pattern and compare the characters at the corresponding positions.
+  - If the characters are equal or the pattern character is a question mark, increment both `i` and `j`.
+  - If the pattern character is an asterisk, store the current positions in `match` and `asterisk`, then increment `j`.
+  - If there is a stored `asterisk` position and the current characters don't match, increment match, set `i` to the incremented match value, and set `j` to the `asterisk` position plus one.
+  - If none of the above conditions are met, return `false` as the input string and pattern don't match.
+- After the loop, if there are remaining asterisks in the pattern, increment the pointer `j`.
+- Return `true` if the pointer `j` reaches the end of the pattern, otherwise, return `false`.","```python
+def wildcard_matching(s, p):
+    m = len(s)
+    n = len(p)
+
+    if m < 0 or n < 0:
+        return False
+
+    i = j = match = asterisk = 0
+
+    while i < m and j < n:
+        # If the characters at positions i and j are equal, move both pointers forward
+        if s[i] == p[j]:
+            i += 1
+            j += 1
+        elif j < n and p[j] == '*':
+            match += 1
+            asterisk = j
+            j += 1
+        # If we have found a '*' in the pattern before, move forward by one character
+        elif asterisk != 0:
+            i = match + 1
+            j = asterisk + 1
+            match += 1
+        else:
+            return False
+
+    # Process any remaining '*' characters at the end of the string and pattern
+    while j < n and p[j] == '*':
+        j += 1
+
+    return j == n
+```",3.0,18.39361262199236
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm follows a typical multiplication method where each digit of both numbers is multiplied pairwise, with the correct position shifted as you move through the digits. Then, the products of these digits are combined to form the final result.
+
+1. Initialize an array `pos` to store the intermediate results, with a size equal to the sum of the lengths of both input strings.
+2. Run two nested loops for each digit of both input numbers (from right to left).
+3. Calculate the product of the two digits.
+4. Determine the indices to store the product values in the `pos` array, e.g., in the form of tens and units.
+5. Update the `pos` array with the new product values.
+6. Combine the values in the `pos` array to form the final result string.
+
+The time complexity is O(m*n) where `m` and `n` are the lengths of the input strings, `num1` and `num2`. The space complexity is also O(m+n).","```python
+def longhand_multiply(num1, num2):
+    pos = [0] * (len(num1) + len(num2))
+    result = """"
+
+    for i, dig_num1 in enumerate(reversed(num1)):   
+        for j, dig_num2 in enumerate(reversed(num2)): 
+            prod = int(dig_num1) * int(dig_num2)
+            
+            ten, unit = divmod(prod + (pos[j+i] if i<len(num2)-1 else prod), 10)   
+            pos[j+i] = ten      
+            result += str(unit)
+
+    return ''.join(map(str, reversed(pos))) or ""0""
+```",3.0,18.537260564000462
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a two-pointer approach, initializing left and right pointers to the beginning and end of the elevation map, respectively. It also initializes two variables `maxLeft` and `maxRight` to keep track of the maximum heights on the left and right of the pointers, as well as a variable `water` to store the trapped water.
+
+The algorithm iterates through the elevation map until the left pointer is less than the right pointer. In each iteration, it compares the values at both pointers to determine which side is shorter. If the value at the left pointer is less than or equal to the value at the right pointer, it means water can be trapped on the left side up to the height of the shorter bar. The algorithm updates `maxLeft` with the maximum height on the left side and then adds the trapped water (which is the difference between the maximum height and the current height) to the `water` variable. The left pointer is then incremented. If the value at the right pointer is smaller, the same logic is applied to the right side and the right pointer is decremented.
+
+This process is repeated until the left pointer is no longer less than the right pointer, at which point the total trapped water has been calculated and the `water` variable is returned. This algorithm has a time complexity of O(n) and a space complexity of O(1) as it only uses constant extra space.","```python
+def trap(height):
+    if len(height) < 3:
+        return 0
+
+    water = 0
+    maxLeft = 0
+    maxRight = 0
+    left = 0
+    right = len(height) - 1
+
+    while left <= right:
+        if height[left] < height[right]:
+            if height[left] >= maxLeft:
+                maxLeft = height[left]
+            else:
+                water += (maxLeft - height[left])
+            left += 1
+        else:
+            if height[right] >= maxRight:
+                maxRight = height[right]
+            else:
+                water += (maxRight - height[right])
+            right -= 1
+
+    return water
+```",3.0,17.584595556007116
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            In this algorithm, the elements are swapped with the values at their correct index if they are positive, in range, and not equal to the value already at that index. After the first loop, the array will have correct values at correct indices where possible (1-based), so we just need to find the index `i` where `nums[i] != i+1`. If not found, return the next positive integer `n + 1`. The loop has O(n) complexity, because each time at least one element gets placed at its correct position, so we need a max of n iterations on average.","```python
+def firstMissingPositive(nums):
+    if not nums: return 1
+    n = len(nums)
+    for i in range(n):
+        while 1 <= nums[i] <= n and nums[nums[i] - 1] != nums[i]:
+            nums[nums[i] - 1], nums[i] = nums[i], nums[nums[i] - 1]
+    for i in range(n):
+        if nums[i] != i + 1:
+            return i + 1
+    return n + 1
+```",5.0,18.289517555007478
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a backtracking approach to find all possible combinations. It starts by sorting the input `candidates` array/list. Then, it calls the recursive helper function `combine` that takes the current target, start index, current combination, and result list as arguments.
+
+1. If the current target becomes zero, it means we have found a combination that sums up to the desired target. Add the current combination to the result list and return.
+2. Iterate through the `candidates` list starting from the given index.
+   - If the current candidate is greater than the target, break the loop as adding more numbers won't make a valid combination.
+   - Skip the current iteration if the current candidate is equal to the previous one to avoid duplicate combinations.
+   - Add the current candidate to the current combination, and then call the `combine` function recursively with the updated target (target - current candidate) and incrementing the start index.
+   - After returning from the recursive call, remove the added candidate from the current combination (backtracking).
+
+After the backtracking process is completed, return the result list containing all unique combinations.","```python
+def find_combinations(candidates, target):
+    if len(candidates) == 0 or target > sum(candidates):
+        return []
+    
+    def combine(target, start_index, current_combination, result_list):
+        if target == 0:
+            result_list.append(current_combination)
+            return True
+        while start_index < len(candidates):
+            if candidates[start_index] > target:
+                break
+            # Skip duplicates
+            if start_index > 0 and candidates[start_index] == candidates[start_index - 1]:
+                start_index += 1
+                continue
+            current_combination.append(candidates[start_index])
+            # If the sum exceeds target, backtrack by removing last number added
+            if (target - candidates[start_index]) < target:  
+                target = target - candidates[start_index]
+                start_index -= 1
+                current_combination.pop()
+            else:
+                combine(target, start_index + 1, current_combination, result_list)
+            # Remove the last number added from combination for backtracking
+            target = target - candidates[start_index]
+            current_combination.pop()
+            start_index += 1
+        return True
+    
+    candidates.sort()
+    result_list = []
+    combine(target, 0, [], result_list)
+    return result_list
+
+print(find_combinations([2,3,6,7], 7))
+```",3.0,20.933501674997387
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a recursive backtracking algorithm. We define a helper function `findCombinations` that takes the following parameters:
+
+1. `startIndex`: the index of the candidates array from which it can start choosing numbers.
+2. `remaining`: the remaining sum needed to reach the target.
+
+The base cases are:
+- If `remaining` is 0, it means we have found a valid combination, so we return a list containing an empty list.
+- If `startIndex` is equal to the length of candidates, or `remaining` is negative, there are no valid combinations, so we return an empty list.
+
+In the function, we first initialize an empty list called `result`. Then, we make two recursive calls to `findCombinations`:
+
+1. Excluding the current candidate at `startIndex` and incrementing `startIndex`, to search for combinations without this candidate.
+2. Including the current candidate in the combination, and decreasing `remaining` accordingly (without updating `startIndex`).
+
+After getting results from both recursive calls, we merge them and return the final list of combinations.
+
+The main function `combinationSum` calls `findCombinations` with `startIndex` as 0 and `remaining` as the target, and returns the result after the recursion is done.","```
+def findCombinations(candidates, startIndex, remaining):
+    if remaining == 0:
+        return [[]]
+    if startIndex >= len(candidates) or remaining < 0:
+        return []
+    
+    result = []
+    # Recursive call excluding the current candidate and incrementing start index
+    excludedResult = findCombinations(candidates, startIndex + 1, remaining)
+    for combination in excludedResult:
+        result.append(combination)
+        
+    # Recursive call including the current candidate and decreasing remaining accordingly
+    includedResult = findCombinations(candidates, startIndex + 1, remaining - candidates[startIndex])
+    for combination in includedResult:
+        result.append([candidates[startIndex]] + combination)
+    
+    return result
+
+def combinationSum(candidates, target):
+    return findCombinations(candidates, 0, target)
+
+# Example usage
+print(combinationSum([2,3,6,7], 7))
+```",4.0,15.431573804002255
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a recursive solution. It starts with the base case, when `n` is 1, it returns the first term of the sequence ""1"". In other cases, it makes a recursive call to the function with `n-1` to get the previous term in the sequence. Then it iterates through the previous term, comparing each character with the previous one to count the number of consecutive equal digits. When it encounters a different character, it appends the count and the character to the result string and resets the count to 1. Finally, it appends the last count and character to the result string and returns it.","```python
+def generate_sequence(n, result=''):
+    if n == 1:
+        return result + '1'
+    
+    prev_term = int(generate_sequence(n-1, ''))
+    str_prev_term = str(prev_term)
+    
+    count = 1
+    for i in range(1, len(str_prev_term)):
+        if str_prev_term[i] == str_prev_term[i-1]:
+            count += 1
+        else:
+            result += str(count) + str_prev_term[i-1]
+            count = 1
+    
+    result += str(count) + str_prev_term[-1]
+    
+    return generate_sequence(n-1, result)
+
+print(generate_sequence(3))
+```",2.0,15.51923452799383
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. The algorithm starts by searching for an empty cell (denoted by '.').
+2. Once an empty cell is found, it tries to insert a number from 1 to 9.
+3. For each inserted number, it checks if its placement is valid based on Sudoku rules:
+   - The number must not be present in the same row or column.
+   - The number must not be present in its corresponding 3x3 grid.
+4. It calls itself (backtracks) recursively whenever a valid number is inserted into the cell.
+5. If inserting a number fails to lead to a valid solution, the algorithm reverts that cell to '.' and tries the next number.
+6. The process is repeated until a valid board is created or all possibilities have failed.
+7. Once an empty cell is not found, it considers the board solved and exits the process.","```python
+import copy
+
+def solve_sudoku(board):
+    # Step 1: Initialize empty grid and find next cell to fill
+    rows, cols = len(board), len(board[0])
+    empty_cells = [(i, j) for i in range(rows) for j in range(cols) if board[i][j] == '.']
+    
+    # If no cells are found return the solved Sudoku
+    if not empty_cells: 
+        print(""Sudoku Solved!"")
+        return True
+        
+    # Step 2: Iterate through each cell in grid and try to insert number from 1-9.
+    for (i, j) in empty_cells:
+        num = 1 if len(empty_cells) == 1 else min((len(empty_cells) - 1), i*cols + j + 1)
+        for n in range(num, 10): 
+            # Step 3: Check whether the inserted number follows Sudoku rules. If yes then mark it as invalid and backtrack if necessary.
+            row_valid, col_valid = True, True
+            for k in range(rows):
+                if board[i][k] == str(n) or board[k][j] == str(n):  
+                    row_valid = False
+                if n not in [board[x][y] for x in range((i//3)*3, (i//3)*3 + 3) for y in range((j//3)*3, (j//3)*3 + 3)]:
+                    col_valid = False
+            if row_valid and col_valid:  
+                board[i][j] = str(n)
+                valid_flag = solve_sudoku(board) 
+                
+                # Step 6: If a solution is found, mark it as valid; otherwise revert the change if necessary.
+                if valid_flag: return True  
+                board[i][j] = '.'  
+        return False
+    return None
+
+# Example usage:
+board = [
+    ['5', '3', '.', '.', '7', '.', '.', '.', '.'],
+    ['6', '.', '.', '1', '9', '5', '.', '.', '.'],
+    ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
+    ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
+    ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
+    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+    ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
+    ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
+    ['.', '.', '.', '.', '8', '.', '.', '7', '9']
+]
+
+solve_sudoku(board)
+for row in board:
+    print(row)
+```",4.0,21.387250889994903
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            Iterate through the entire board and check each value. If it's not an empty cell, construct a row identifier, a column identifier, and a box identifier. Check if any of these identifiers have been seen before; if so, return false. If not, add these identifiers to the 'seen' set. Once the entire board has been traversed, return true as no conflicts have been found.","```python
+def is_valid_sudoku(board):
+    seen = set()
+    
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] != 0:
+                box_index = (i // 3) * 3 + j // 3
+                row_id = f""r{i+1}""
+                col_id = f""c{ord('A') + j}""
+                box_id = f""b{box_index+1}""
+                
+                if row_id in seen or col_id in seen or box_id in seen:
+                    return False
+                
+                seen.add(row_id)
+                seen.add(col_id)
+                seen.add(box_id)
+    
+    return True
+```",3.0,14.928893745993264
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The given problem requires a binary search algorithm. We define two pointers, `left` and `right`, initially set to the first and last index of the array. We then enter a loop that continues as long as left is less than or equal to right. Inside the loop, we calculate the middle index, `mid`, as the average of left and right. If the value at this middle index is equal to the target value, we return the middle index. If the middle value is less than the target value, we set left to `mid + 1`, meaning we search the right half of the remaining array. If the middle value is greater than the target value, we set the right to `mid - 1`, meaning we search the left half of the remaining array. After the loop, if the target value is not found, we return the value of the left pointer, which represents the index where the target value should be inserted.","```python
+def find_insert_position(array, target):
+    left = 0
+    right = len(array) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        
+        if array[mid] == target:
+            return mid
+        elif array[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    
+    # If not found, find insertion point at the end of search space (left pointer)
+    if left == len(array):
+        return left
+
+    # Insert the target value into the correct position in the array
+    array.insert(left, target)
+
+# Test the function
+array = [1, 3, 5, 7]
+target = 6
+print(find_insert_position(array, target))
+
+target = 8
+print(find_insert_position(array, target))
+```",4.0,20.336041128000943
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Initialize `start` and `end` variables to -1 as default return values.
+2. Setup `left` and `right` pointers at the beginning and end of the `nums` array.
+3. Loop until `left` is greater than `right`:
+   a. Calculate the `mid` index.
+   b. If the value at the `mid` index is smaller than `target`, move the `left` pointer to `mid + 1`.
+   c. If the value at the `mid` index is greater than or equal to `target`, move the `right` pointer to `mid - 1`. If the value at the `mid` index is equal to `target`, update `start` with `mid`.
+4. Reset `left` and `right` pointers to the beginning and end of the `nums` array.
+5. Loop again until `left` is greater than `right`:
+   a. Calculate the `mid` index.
+   b. If the value at the `mid` index is greater than `target`, move the `right` pointer to `mid - 1`.
+   c. If the value at the `mid` index is smaller than or equal to `target`, move the `left` pointer to `mid + 1`. If the value at the `mid` index is equal to `target`, update `end` with `mid`.
+6. Return the resulting `start` and `end` values as an array/list.","```
+def twoSum(nums, target):
+    start = end = -1
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            start = mid
+            break
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            end = mid
+            break
+        elif nums[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    return [start, end]
+```",2.0,19.24236245600332
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a variation of binary search. The main idea is to decide whether the target is in the left or the right half of the current subarray. If nums[mid] >= nums[left], the left half is sorted. If target is in the range [nums[left], nums[mid]), set right = mid - 1. Otherwise, set left = mid + 1. If nums[mid] < nums[left], the right half must be sorted. If target is in the range (nums[mid], nums[right]], set left = mid + 1. Otherwise, set right = mid - 1. Continue the process until the target is found or the subarray is empty, in which case return -1. This algorithm has a runtime complexity of O(log n) because it eliminates half of the remaining elements at each step, similar to a binary search.","```python
+def search(nums, target):
+    left = 0
+    right = len(nums) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        
+        if nums[mid] == target:
+            return mid
+        
+        # If left half is sorted
+        if nums[mid] >= nums[left]:
+            if target >= nums[left] and target < nums[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+                
+        # If right half is sorted
+        else:
+            if target > nums[mid] and target <= nums[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+                
+    return -1
+
+# Example usage
+nums = [4,5,6,7,8,9]
+target = 7
+print(search(nums, target)) # Output: 4
+```",5.0,19.664155771999503
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We can solve this problem by following the steps below:
+
+1. Identify the largest index `k` such that `nums[k] < nums[k + 1]`. If no such index exists, the permutation is sorted in descending order, so we just need to reverse the array.
+2. Identify the largest index `l` greater than `k` such that `nums[k] < nums[l]`.
+3. Swap the value of `nums[k]` with that of `nums[l]`.
+4. Reverse the sub-array `nums[k + 1:]` which is guaranteed to be in non-increasing order.
+
+By making these changes in place and only using constant extra memory, we obtain the next permutation of the array nums.","```python
+def next_permutation(nums):
+    n = len(nums)
+    for k in range(n - 2, -1, -1):
+        if nums[k] >= nums[k + 1]:
+            continue
+        else:
+            tail = k
+    
+    if tail == 0:
+        return None
+    
+    for l in range(n - 1, tail, -1):
+        if nums[tail] < nums[l]:
+            break
+            
+    nums[tail], nums[l] = nums[l], nums[tail]
+    
+    nums[tail + 1:] = list(reversed(nums[tail + 1:]))
+    
+    return nums
+```",3.0,16.86291856400203
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. If the input string `s` or `words` array is empty, return an empty list.
+2. Create a hashmap `word_count` to store the count of each word present in the `words` array.
+3. Get the length of a single word, the total number of words, and the total length of the concatenated string.
+4. Iterate through the string `s` with an index `i`, starting from 0 and up to `s.size() - total_length`.
+5. For each index `i`, create a temporary hashmap `temp_word_count`, and iterate through the words starting from index `j` to `total_words - 1`.
+6. Extract the current word from the substring with the starting position `(i + j * word_length)`, and length `word_length`.
+7. Look for the current word in the hashmap `word_count`. If it's not present, break the loop and check the next index.
+8. Add the current word to the temporary hashmap `temp_word_count`. If the word's count in `temp_word_count` exceeds the count in `word_count`, break the loop.
+9. If all words are present in the substring and satisfy the required counts, add the current index `i` to the result list.
+10. Return the result list after processing all indices.","```python
+def find_substring_indexes(s, words):
+    if not s or not words:
+        return []
+    
+    word_count = {}
+    for word in words:
+        if word in word_count:
+            word_count[word] += 1
+        else:
+            word_count[word] = 1
+    
+    word_length = len(words[0])
+    total_words = len(words)
+    total_length = sum(len(word) for word in words)
+    
+    result = []
+    
+    for i in range(0, len(s) - total_length + 1):
+        temp_word_count = {}
+        
+        j = 0
+        while j < total_words and i + (j * word_length) < len(s):
+            current_word = s[i + (j * word_length):i + (j * word_length) + word_length]
+            
+            if current_word in word_count:
+                if current_word not in temp_word_count or temp_word_count[current_word] < word_count[current_word]:
+                    temp_word_count[current_word] = word_count[current_word]
+                else:
+                    break
+            else:
+                break
+            
+            j += 1
+        
+        if j == total_words:
+            result.append(i)
+    
+    return result
+```",4.0,18.275662137006293
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. First, we handle the edge case where dividend = -2^31 and divisor = -1. The result must be 2^31, but since it's out of the signed integer range, we should return 2^31 - 1.
+2. Calculate the sign of the result based on the signs of dividend and divisor.
+3. We use the bitwise shift operator to handle divisions by powers of 2. In each iteration, we initialize the temp variable as the absolute value of the divisor to calculate how many times it fits into the remaining dividend. We then use another loop to repeatedly double the temp variable (by bitwise left shift) and check if the dividend is still greater or equal. If so, we also double the 'multiple' value associated with temp, as that's the actual quotient in the current iteration.
+4. When the shifting loop exits, we subtract the current temp from dividend and accumulate the current multiple to our answer.
+5. Once the dividend is less than the divisor, we break the loop and return the signed quotient by multiplying the sign variable to our answer.","```python
+def divide(dividend: int, divisor: int) -> int:
+    MIN_INT = -2**31
+    MAX_INT = 2**31 - 1
+    
+    sign = -1 if ((dividend < 0) ^ (divisor < 0)) else 1
+    
+    dividend, divisor = abs(dividend), abs(divisor)
+    
+    quotient = 0
+    while dividend >= divisor:
+        temp, i = divisor, 1
+        while dividend >= (temp << 1):
+            temp <<= 1
+            i <<= 1
+        dividend -= temp
+        quotient += i
+    
+    if quotient > MAX_INT and sign == -1:
+        return MAX_INT + 1
+    elif quotient < MIN_INT and sign == -1:
+        return MIN_INT
+    else:
+        return sign * quotient
+```",4.0,17.377386777996435
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm searches for the first occurrence of the `needle` string in the `haystack` string. First, it checks if the `needle` is empty, and if it is, it returns 0. Otherwise, it uses the built-in `find`, `indexOf` or `index` functions provided by the corresponding language's string data type. These functions return the index of the first occurrence of the specified substring. If the substring is not found, they return specific values like string::npos for C++, -1 for Java, and raise a ValueError exception for Python. Depending on the returned value, the algorithm either returns the index of the first occurrence or -1, indicating that `needle` is not part of `haystack`.","```python
+def strStr(haystack, needle):
+    if not needle:
+        return 0
+    if not haystack:
+        return -1
+    try:
+        return haystack.index(needle)
+    except ValueError:
+        return -1
+```",4.0,14.171166149986675
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses two pointers approach. The pointer `i` maintains the position where the next non-val element should be placed, and pointer `j` iterates through the array. If the element at `j` is not equal to `val`, we place it at the position `i` and increment the `i` pointer. The loop continues until we have checked all the elements in the array. The `i` pointer will give us the count of elements that are not equal to `val`, which is the result. Thus, we return the value of `i` as the final result.
+
+The time complexity of this algorithm is O(n), where n is the number of elements in the array, as we only iterate through the array once. The space complexity is O(1) since we do not use any extra memory. We modify the input array in-place.","```
+def removeElement(nums, val):
+    i = 0
+    for j in range(len(nums)):
+        if nums[j] != val:
+            nums[i], nums[j] = nums[j], nums[i]
+            i += 1
+    return i
+```",3.0,13.799018813995644
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            We use two pointers `i` and `j`. `i` starts at the first element and `j` at the second. We go through the array with `j` and compare the elements at the two pointers. If they are different, it means we found a unique element, so we move `i` to the next position and copy the value from `j` to `i`. When we finish going through the array, the length of the unique part is `i+1`.","```python
+def findUniquePart(arr):
+    if not arr:  # check for empty array
+        return 0
+    
+    i = j = 1  # start with i at the first position and j at the second
+    while j < len(arr):  
+        if arr[i-1] == arr[j]:  
+            i += 1  
+            if i > j:  
+                j += 1
+        else:
+            arr[i] = arr[j]
+            i += 1
+            j += 1
+    
+    return i
+
+print(findUniquePart([1,2,3,2,1]))
+print(findUniquePart([1,1,1]))
+print(findUniquePart([]))
+print(findUniquePart([2,2,2,2]))
+```",3.0,14.556004597005085
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. First, we count the length of the linked list.
+2. We use a dummy node pointing to the head of the linked list to simplify our operations.
+3. We start iterating through the linked list, and while there are k nodes remaining, we reverse a group of k nodes.
+4. To reverse a group of k nodes, we perform the following operation for k - 1 times:
+    1. Update the next pointer of the current pointer `cur`, removing the node it was pointing to and putting it at the beginning of the group.
+    2. Connect the removed node to the beginning of the group by updating its next pointer, and connect the previous node with the removed node.
+5. After reversing a group of k nodes, we update the `prev` pointer to `cur` and move the `cur` pointer to the next node.
+6. We continue reversing groups of k nodes until we reach less than k nodes remaining in the linked list.
+7. Finally, we return the next pointer of the dummy node as our new head node.","```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def reverseKGroup(head: ListNode, k: int) -> ListNode:
+    if not head or k == 1:
+        return head
+    
+    dummy = ListNode(0)
+    dummy.next = head
+    prev_tail = dummy
+    
+    while True:
+        node = dummy
+        for _ in range(k - 1):
+            node = node.next
+        
+        if node is None or node.next is None:
+            break
+        
+        tail = node.next
+        prev = None
+        current = dummy.next
+        
+        for _ in range(k):
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        
+        tail.next = None
+        prev_tail.next = tail
+        prev_tail = node
+    
+    return dummy.next
+
+```",3.0,17.428777353998157
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses recursion to solve the problem. It starts by checking if the list has remaining pairs to swap. If not, the head of the current section of the list is returned.
+
+If there are pairs left to swap, it takes the second node (which will become the new head of the current pair) and sets its next node to the result of the recursive call with the node after it as the new head.
+
+Then, it sets the current head's next node to the second node and returns the second node as the new head of the pair. As the recursion unfolds, the pairs get swapped, and the final swapped linked list head is returned.","```python
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+def swapPairs(head):
+    if not head or not head.next:
+        return head
+
+    current_head = head.next
+    new_head = current_head
+    prev_node = head
+
+    while current_head and current_head.next:
+        first_pair_head = current_head
+        second_pair_node = current_head.next
+        
+        # move the second node to become the new head of its pair
+        new_head = second_pair_node
+        new_head.next = first_pair_head
+        new_head.next.next = prev_node  # set the original head's next pointer
+
+        prev_node = first_pair_head
+        current_head = current_head.next.next  # move two steps forward in the list
+        
+    return new_head
+
+# Helper function to print linked list
+def printList(node):
+    while node:
+        print(node.data, end="" "")
+        node = node.next
+    print()
+
+# Testing the solution
+if __name__ == ""__main__"":
+    # Create a sample linked list: 1 -> 2 -> 3 -> 4 -> 5
+    head = Node(1)
+    current = head
+    for i in range(2, 6):
+        new_node = Node(i)
+        current.next = new_node
+        current = current.next
+
+    print(""Original List:"")
+    printList(head)
+
+    swapped_head = swapPairs(head)
+
+    print(""Swapped List:"")
+    printList(swapped_head)
+```",3.0,18.089367640001
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm follows a divide and conquer approach to merge all linked lists into one sorted linked-list. 
+
+1. If the given array of linked-lists is empty, we return a null pointer.
+2. The main function `mergeKLists` merges the first two lists in the array of linked-lists and appends the results (merged list) at the end of the array. It will then remove the merged lists from the beginning of the array. This process is repeated until only one linked-list remains in the array.
+3. The function `merge2Lists` is used for merging two sorted linked-lists. The smallest element of the two lists is chosen as the head node and recursively merged with the rest of the lists.
+
+This algorithm has a time complexity of O(kN) and a space complexity of O(1), where k is the number of linked-lists, and N is the total number of nodes across all linked-lists.","```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def merge2Lists(l1: ListNode, l2: ListNode) -> ListNode:
+    if not l1 or not l2:
+        return l1 if l1 else l2
+    
+    if l1.val < l2.val:
+        l1.next = merge2Lists(l1.next, l2)
+        return l1
+    else:
+        l2.next = merge2Lists(l1, l2.next)
+        return l2
+
+def mergeKLists(lists: list[ListNode]) -> ListNode:
+    if not lists:
+        return None
+    
+    while len(lists) > 1:
+        merged_lists = []
+        
+        for i in range(0, len(lists), 2):
+            if i + 1 < len(lists):
+                l1 = lists[i]
+                l2 = lists[i+1]
+                merged_list = merge2Lists(l1, l2)
+                merged_lists.append(merged_list)
+            else:
+                merged_lists.append(lists[i])
+        
+        lists = merged_lists
+    
+    return lists[0]
+
+# Example usage
+list1 = ListNode(1, ListNode(4, ListNode(5)))
+list2 = ListNode(1, ListNode(3, ListNode(4)))
+list3 = ListNode(2, ListNode(6))
+
+merged_list = mergeKLists([list1, list2, list3])
+
+while merged_list:
+    print(merged_list.val, end="" "")
+    merged_list = merged_list.next
+```",4.0,21.197786655000527
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a helper function called `generateParenthesisHelper` which receives four parameters: the number of open parentheses left to place, the number of close parentheses left to place, the current string that holds the generated parentheses so far, and the result list to store valid combinations.
+
+The algorithm uses a depth-first search to construct valid combinations of parentheses. It starts with `n` open parentheses and increments the number of close parentheses as it places an open parenthesis. When the helper function has no open or close parentheses left to place, it means a valid combination is found, so it adds the combination to the result list.
+
+The helper function recursively calls itself. If there are open parentheses left to place, it calls itself with one less open parenthesis and one more close parenthesis. If there are close parentheses left to place, it calls itself without changing the number of open parentheses and with one less close parenthesis. Finally, the current string in each case is updated with the placed open or close parenthesis.","```
+def generateParenthesis(n):
+    def generateParenthesisHelper(open_paren, close_paren, current_string, result):
+        if open_paren == 0 and close_paren == 0:
+            result.append(current_string)
+        if open_paren > 0:
+            generateParenthesisHelper(open_paren-1, close_paren+1, current_string+'(', result)
+        if close_paren > 0:
+            generateParenthesisHelper(open_paren, close_paren-1, current_string+')', result)
+
+    result = []
+    generateParenthesisHelper(n, n, """", result)
+    return result
+
+# Test the function
+print(generateParenthesis(3))
+```",4.0,18.9973192410107
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm is a recursive solution:
+1. If either `list1` or `list2` is null, return the other list as the result.
+2. Compare the values of the nodes in `list1` and `list2`.
+3. If `list1` node value is smaller, set `list1.next` to the result of recursively calling the function with `list1.next` and `list2`.
+4. Otherwise, set `list2.next` to the result of recursively calling the function with `list1` and `list2.next`.
+5. Return the current node as the new head of the merged list.
+
+This process is repeated until one of the lists becomes null, then the other list is returned as the remainder of the merged list.
+
+Please note that each language has some differences in syntax, like defining a class in Python or using the `nullptr` keyword in C++. However, the core logic of the solution remains the same for all languages.","```python
+class Node:
+    def __init__(self, value=0, next=None):
+        self.value = value
+        self.next = next
+
+def mergeTwoLists(list1: Node, list2: Node) -> Node:
+    # Base case: If either of the lists is null, return the other list as it is already sorted
+    if not list1:
+        return list2
+    elif not list2:
+        return list1
+    
+    # Compare the values of current nodes in both lists and update their structure accordingly
+    if list1.value < list2.value:
+        list1.next = mergeTwoLists(list1.next, list2)
+        return list1
+    else:
+        list2.next = mergeTwoLists(list1, list2.next)
+        return list2
+
+# Example usage:
+list1 = Node(5)
+list1.next = Node(10)
+
+list2 = Node(3)
+list2.next = Node(8)
+
+merged_list = mergeTwoLists(list1, list2)
+while merged_list:
+    print(merged_list.value, end=' ')
+    merged_list = merged_list.next
+```",5.0,16.57452884200029
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a stack data structure to check the validity of the input string. It iterates through the string one character at a time. When an open bracket is encountered, it is pushed onto the stack. When a close bracket is encountered, the algorithm checks if the stack is empty or the corresponding open bracket is not at the top of the stack. If either of these conditions is true, the function returns false. If not, the open bracket is popped from the stack. After iterating through the entire string, the function checks if the stack is empty. If the stack is not empty, the function returns false, indicating there were unmatched open braces. Otherwise, the function returns true, indicating that the string is valid.","```python
+def isValid(s):
+    stack = []
+    bracket_map = {')': '(', '}': '{', ']': '['}
+    
+    for char in s:
+        if char in bracket_map.values():
+            stack.append(char)
+        elif char in bracket_map.keys():
+            if not stack or stack.pop() != bracket_map[char]:
+                return False
+                
+    return not stack
+```",4.0,14.716977488002158
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses two pointers, first and second. The first pointer traverses the list, moving n steps ahead of the second pointer. If the first pointer reaches the end of the list, then the head is updated, and the second pointer becomes the new head. Otherwise, the second pointer is moved along with the first pointer until the first pointer is one position before the last item. Then, the nth node from the end of the list is skipped by updating the next pointer of the second pointer. Finally, the head of the updated list is returned.","```
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
+    first = head
+    second = head
+    
+    # Move the first pointer ahead by n positions
+    for i in range(n):
+        if not first:
+            return None  # If there are no nodes left after moving 'n' steps, return None
+        
+        first = first.next
+
+    while first:
+        first = first.next
+        second = second.next  # Move both pointers one step at a time until the first pointer reaches the end
+
+    if not second:  
+        head = head.next
+    else:
+        second.next = second.next.next  
+
+    return head
+```",3.0,17.27449169200554
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. First, sort the given array of n integers.
+2. Iterate through the array with two nested loops to choose two (not necessarily distinct) elements (i, j) where i < j.
+3. Create two pointers, left and right, starting from j + 1 and n - 1, respectively, to find a pair of elements (left, right) with sum equal to target - (nums[i] + nums[j]).
+4. Check whether the current quadruplet [nums[i], nums[j], nums[left], nums[right]] is unique. If the same quadruplet is not already in the result, add it to the result.
+5. To avoid repetition, if the next element is the same as the current element in either i, j, left, or right, skip the current iteration and move to the next one.
+6. Return the resulting array of unique quadruplets.","```python
+def fourSum(nums, target):
+    nums.sort()
+    result = []
+    for i in range(len(nums)):
+        if i > 0 and nums[i] == nums[i-1]:
+            continue
+        for j in range(i+1, len(nums)):
+            if j > i + 1 and nums[j] == nums[j - 1]:
+                continue
+            left = j + 1
+            right = len(nums) - 1
+            while left < right:
+                current_sum = nums[i] + nums[j] + nums[left] + nums[right]
+                if current_sum < target:
+                    left += 1
+                elif current_sum > target:
+                    right -= 1
+                else:
+                    result.append([nums[i], nums[j], nums[left], nums[right]])
+                    while left < right and nums[left] == nums[left+1]:
+                        left += 1
+                    while left < right and nums[right] == nums[right-1]:
+                        right -= 1
+                    left += 1
+                    right -= 1
+    return result
+
+# Test the function
+nums = [1,0,-1,0,-2,2]
+target = 0
+print(fourSum(nums, target))
+```",3.0,19.321662279005977
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm visits each digit from the given `digits` string one by one. For each digit, it appends all possible characters corresponding to that digit, in a breadth-first search manner. The current stage's results are saved in the `result` list (or `output` list in Java). A temporary list `temp` is used to store the combinations formed at each stage before replacing the `result` list. The phone buttons mapping is stored in the `phone` list/array.","```python
+def letterCombinations(digits):
+    if not digits:
+        return []
+
+    phone = {
+        ""2"": [""a"", ""b"", ""c""],
+        ""3"": [""d"", ""e"", ""f""],
+        ""4"": [""g"", ""h"", ""i""],
+        ""5"": [""j"", ""k"", ""l""],
+        ""6"": [""m"", ""n"", ""o""],
+        ""7"": [""p"", ""q"", ""r"", ""s""],
+        ""8"": [""t"", ""u"", ""v""],
+        ""9"": [""w"", ""x"", ""y"", ""z""]
+    }
+
+    result = []
+    temp = []
+
+    def dfs(i, path):
+        if i == len(digits):
+            result.append(path)
+            return
+        for char in phone[digits[i]]:
+            path += char
+            dfs(i + 1, path)
+            path = path[:-1]
+
+    dfs(0, """")
+    return result
+
+print(letterCombinations(""23""))
+```",4.0,20.869432808001875
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Sort the input array `nums`.
+2. Initialize the `closest` variable to be the sum of the first three elements.
+3. Iterate through the sorted array with a pointer `i` running from the first element to the third-to-last element.
+4. Initialize two-pointers `left` (set to `i + 1`) and `right` (set to the last element).
+5. While `left` is less than `right`:
+    a. Calculate the current sum `cur_sum` using the elements at positions `i`, `left`, and `right`.
+    b. If `cur_sum` is equal to `target`, return it as the closest sum.
+    c. Update the `closest` sum if the difference between `target` and `cur_sum` is less than the difference between `target` and `closest`.
+    d. Move the `left` pointer forward if `cur_sum` is less than `target`, otherwise move the `right` pointer backward.
+6. Return the `closest` sum found.","```
+def find_closest_sum(nums, target):
+    nums = sorted(nums)
+    closest = sum(nums[:3])
+
+    for i in range(3, len(nums)-1):
+        left_pointer = i + 1
+        right_pointer = len(nums) - 1
+        
+        while left_pointer < right_pointer:
+            current_sum = nums[i] + nums[left_pointer] + nums[right_pointer]
+            
+            if abs(target - current_sum) < abs(target - closest):
+                closest = current_sum
+                
+            if current_sum < target:
+                left_pointer += 1
+            else:
+                right_pointer -= 1
+    
+    return closest
+
+# Example usage
+nums = [1,2,4,7,11]
+target = 9
+print(find_closest_sum(nums, target))
+```",3.0,18.908594597000047
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Sort the input array `nums`.
+2. Loop through `nums` from index `0` to `length - 2`. Let the current index be `i`.
+    - If `i` is `0` or `nums[i]` is not equal to the previous element (`nums[i - 1]`), perform the following steps:
+        - Initialize two pointers `j` and `k`, where `j` is the next index after `i`, and `k` is the last index of `nums`.
+        - While `j` is less than `k`, perform the following steps:
+            - Calculate the sum `s` of the elements at indices `i`, `j`, and `k`.
+            - If the sum `s` is equal to `0`, then we've found a valid triplet. Add it to the `result` array and move the pointers, `j` and `k`, skipping duplicates if any.
+            - If the sum `s` is less than `0`, increment `j` to move towards positive values.
+            - If the sum `s` is greater than `0`, decrement `k` to move towards negative values.
+3. Return the `result` array.
+
+The algorithm removes duplicates by checking if the current numbers being processed are equal to previously processed numbers. The sorting step helps in simplifying the algorithm and reducing the search space.","```python
+def three_sum(nums):
+    nums.sort()
+    result = []
+    
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i-1]:
+            continue
+        
+        j, k = i + 1, len(nums) - 1
+        while j < k:
+            s = nums[i] + nums[j] + nums[k]
+            
+            if s < 0:
+                j += 1
+            elif s > 0:
+                k -= 1
+            else:
+                result.append([nums[i], nums[j], nums[k]])
+                
+                while j < k and nums[j] == nums[j+1]:
+                    j += 1
+                while j < k and nums[k] == nums[k-1]:
+                    k -= 1
+                    
+                j += 1
+                k -= 1
+                
+    return result
+
+print(three_sum([-1,0,1,2,-1,-4]))
+```",4.0,19.36556957499124
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates through the characters in the first string and compares the equivalent characters in the subsequent strings. If there is a mismatch detected, return the common prefix up to the mismatch point. If the algorithm finishes iterating over the first string, return the entire first string as the common prefix.
+
+1. Check if the input array is empty, if it is, return an empty string as there is no common prefix.
+2. Iterate through the characters of the first string.
+3. For each character, iterate through the rest of the strings in the array.
+4. Compare the current character with the corresponding character in the other strings.
+5. If there is a mismatch or if we reach the end of a string, return the common prefix substring up to the current index.
+6. If the loop reaches the end of the first string, then the whole first string is the common prefix. Return the entire first string.","```python
+def longestCommonPrefix(strs):
+    if not strs:
+        return """"
+
+    shortest_str = min(strs, key=len)
+
+    for i, char in enumerate(shortest_str):
+        for other_string in strs:
+            if other_string[i] != char:
+                return shortest_str[:i]
+
+    return shortest_str
+```",4.0,15.44606581098924
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm iterates through the input string, which represents the Roman numeral. At each iteration, the character is converted to its corresponding integer value using a hash map. Then, the value is added to the total. However, if the current value is greater than the previous value, it means that we need to subtract the previous value from the current value (while considering that the previous value has already been added once). To do this, we add to the total the current value minus 2 times the previous value. Finally, the previous value is updated, and the loop continues. After the loop finishes, the total gives us the integer value equivalent to the Roman numeral.","```python
+def roman_to_int(s):
+    mapping = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+    total = 0
+    for i in range(len(s)):
+        if i > 0 and mapping[s[i]] > mapping[s[i - 1]]:
+            total += mapping[s[i]] - 2 * mapping[s[i - 1]]
+        else:
+            total += mapping[s[i]]
+    return total
+
+print(roman_to_int(""III"")) # Output: 3
+print(roman_to_int(""IV"")) # Output: 4
+print(roman_to_int(""IX"")) # Output: 9
+print(roman_to_int(""LVIII"")) # Output: 58
+print(roman_to_int(""MCMXCIV"")) # Output: 1994
+```",4.0,17.030003669002326
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm starts with a list of pairs, where each pair contains a decimal value and its corresponding roman numeral. Then, it iteratively go through the list of pairs and checks if the num is greater than or equal to the decimal value. If it is, it appends the roman numeral to the result, and subtracts the decimal value from the num. This is done until the num becomes 0.","```
+def roman_to_decimal_converter(pairs):
+    # Precomputed mapping for Roman numerals to decimals
+    roman_map = {
+        'M': 1000, 'D': 500, 'C': 100, 'L': 50,
+        'X': 10, 'V': 5, 'I': 1
+    }
+
+    result = []
+
+    # Iterate through each pair in the input list
+    for decimal_value, roman_numeral in pairs:
+        
+        # Convert Roman numeral to decimal equivalent using precomputed mapping
+        num = decimal_value
+        while num > 0:
+            if roman_numeral == """":
+                break
+            for i in range(len(roman_numeral)):
+                if roman_map[roman_numeral[i]] < num:
+                    result.append((num, roman_numeral[:i+1]))
+                    num -= roman_map[roman_numeral[i]]
+                    roman_numeral = roman_numeral[i+1:]
+                    break
+
+    return result
+
+# Example usage
+pairs = [(10, 'X'), (5, 'V'), (1000, 'M')]
+print(roman_to_decimal_converter(pairs))
+```",2.0,15.49783379600558
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a two-pointer approach, with one pointer starting from the left end and the other from the right end. It calculates the area between these two lines and updates the maximum area if the current area is larger than the previously calculated maximum area. If the height at the left pointer is less than the height at the right pointer, it moves the left pointer to the right. Otherwise, it moves the right pointer to the left. The algorithm continues until the pointers meet.
+
+This algorithm ensures that the maximum area is found without having to check all possible pairs of lines because it always chooses the pair of lines with the maximum possible distance and minimum height difference at each step.","```python
+def findMaxArea(heights):
+    left, right = 0, len(heights) - 1
+    max_area = 0  
+
+    while left < right:  
+        current_area = (right - left) * min(heights[left], heights[right]) 
+        max_area = max(max_area, current_area)  
+
+        if heights[left] <= heights[right]:  
+            left += 1  
+        else:
+            right -= 1  
+    
+    return max_area
+```",4.0,21.435957737994613
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            Here is the algorithm:
+
+1. If the integer is negative, immediately return false, as negative numbers cannot be palindromes.
+2. Create a variable named `original` to store the original integer value and `reversed` initialized with 0 to store the reversed integer value.
+3. Iterate through the integer while it's greater than zero and, in each iteration, perform the following operations:
+   a. Multiply the `reversed` value by 10 and add the modulus of the integer (x) by 10.
+   b. Divide the integer (x) by 10, discarding the remainder.
+4. Compare `original` and `reversed` integers; if they are equal, return true; otherwise, return false.
+
+This approach requires O(log10(n)) time complexity as we are dividing the input by 10 in each iteration.","```python
+def is_palindrome(n):
+    if n < 0:
+        return False
+    original = n
+    reversed = 0
+    while n > 0:
+        reversed = (reversed * 10) + (n % 10)
+        n //= 10
+    return original == reversed
+```",5.0,16.74172978599381
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Initialize `result` as 0, index `i` as 0, and `sign` as 1 (positive).
+2. Loop through the string until a non-space character is found or the end of the string is reached.
+3. If the current character is '+' or '-', update the `sign` according to the character and increment the index `i`.
+4. If a digit is found, multiply the previous `result` by 10 and add the digit to it. Increment the index `i`.
+5. Check if the result multiplied by the sign is out of the 32-bit signed integer range. If so, return the appropriate boundary value.
+6. When no more digits are found, return the final result multiplied by the sign.","```python
+import sys
+
+def calculate_integer(input_str):
+    result = 0
+    i = 0
+    sign = 1
+    
+    while i < len(input_str) and input_str[i] == ' ':
+        i += 1
+        
+    if i == len(input_str):
+        return 0
+        
+    if input_str[i] in ['+', '-']:
+        sign *= -1 if input_str[i] == '-' else 1
+        i += 1
+        
+    while i < len(input_str) and input_str[i].isdigit():
+        result = (result * 10) + int(input_str[i])
+        i += 1
+        
+    if abs(result * sign) > sys.maxsize:
+        return sys.maxsize if sign > 0 else -sys.maxsize - 1
+        
+    return result * sign
+```",4.0,19.810437121006544
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm initializes `res` as 0. Then, we determine the sign of the input integer and take its absolute value. We use a while loop to iterate through each digit of `x` from right to left. In each iteration, we multiply the current `res` by 10 and add the last digit of `x` to it. The last digit of `x` is obtained by `x % 10`. After adding the last digit, we remove it from `x` by doing either `x /= 10` or `x //= 10`.
+
+After processing all the digits, we adjust `res` with the sign we computed earlier. Finally, we check if the reversed integer is within the 32-bit integer range. If it is, we return the result; otherwise, we return 0.","```python
+def reverse(x: int) -> int:
+    res = 0
+    is_negative = x < 0
+    
+    if is_negative:
+        x = -x
+        
+    while x > 0:
+        last_digit = x % 10
+        res = res * 10 + last_digit
+        x //= 10
+        
+    if not is_negative and res > 2**31 - 1 or is_negative and res > 2**31:
+        return 0
+    
+    return res
+```",3.0,15.525790822997806
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. If the number of rows is 1 or is greater than or equal to the length of the string, the string is just returned as is.
+2. Create an array called ""rows"" to contain the characters that would reside in each row of the zigzag pattern.
+3. Iterate through the string one character at a time.
+4. For each character in the string, place it into the appropriate row of the ""rows"" array.
+5. Determine whether the next character should be placed in the row above or below the current row by checking if the current row is 0 (at the top) or equal to the number of rows minus 1 (at the bottom). If at the top or the bottom, the direction will change.
+6. Update the current row index according to the direction (going up or down).
+7. After iterating through the entire string, join the rows array into a single string and return it.","```python
+def zigzag(n, s):
+    if n <= 1 or len(s) <= n:
+        return s
+    
+    rows = [''] * n
+    index, step = 0, 1
+    
+    for char in s:
+        rows[index] += char
+        
+        if index == 0 and step == 1 or \
+           index == n - 1 and step == -1:
+            step *= -1
+            
+        index += step
+        
+    return ''.join(rows)
+```",4.0,15.792275707004592
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Initialize `start` and `maxLength` for result substring.
+2. Iterate through the given string `s` using the index `i`.
+3. For each index `i`, create two pointers `l` and `r` starting at `i`.
+4. Check if there's a consecutive sequence of identical characters, increment the right pointer `r` until the end of the sequence is reached.
+5. Update the index `i` to the current value of `r`.
+6. Expand the pointers `l` and `r` outwards to find the longest palindromic substring, checking that characters on both sides are equal.
+7. If the current length of the substring is greater than `maxLength`, update `start` and `maxLength`.
+8. Return the longest palindromic substring using the `start` and `maxLength`.","```python
+def longest_palindrome(s):
+    if not s:
+        return """"
+    
+    start = 0
+    maxLength = 1
+    
+    for i in range(len(s)):
+        l, r = i, i
+        
+        while r < len(s) - 1 and s[r + 1] == s[r]:
+            r += 1
+        i = r
+        
+        while l > 0 and r < len(s) - 1 and s[l - 1] == s[r + 1]:
+            l -= 1
+            r += 1
+            
+        if maxLength < r - l + 1:
+            start, maxLength = l, r - l + 1
+            
+    return s[start:start + maxLength]
+```",4.0,16.47177320899209
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Choose the smaller array as nums1 so that the problem is simpler with less log(n) complexity.
+2. Use Binary Search (BS) to partition the smallest array.
+3. Now we calculate the position of partition in the larger array (nums2) having fetched the smaller one.
+4. Find the four important numbers - maxSize - left and right of partition in the two arrays.
+5. If maxSizeLeft <= minSizeRight and maxSizeLeft2 <= minSizeRight2, then the partition of both arrays is correct, if not, adjust the partition of nums1. If maxLeftX > minRightY, move the BS partition to the left; if maxLeftY > minRightX, move the BS partition to the right.
+6. When the correct partition is found, calculate the median based on the length of the merged array, even or odd.","```python
+def mergeArrays(nums1, nums2):
+    merged = sorted(nums1 + nums2)
+    return merged
+
+def binarySearchPartition(mergedArray, lo, hi):
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if mid == partitionPositionInNums1 or mid == partitionPositionInNums2:
+            return mid
+        elif (mid > partitionPositionInNums1 and mid <= partitionPositionInNums2) or (mid < partitionPositionInNums2 and mid >= partitionPositionInNums1):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+def findMaxMinForPartition(partitionPosition, array):
+    if len(array) == 0:
+        return 0
+    elif partitionPosition < len(array):
+        maxLeftX = max(array[:partitionPosition])
+        minRightY = min(array[partitionPosition:])
+        return maxLeftX, minRightY
+    else:
+        maxLeftX = max(array)
+        minRightY = float('inf')
+        for i in array:
+            if i < maxLeftX and i > 0:
+                minRightY = min(minRightY, i)
+        return maxLeftX, minRightY
+
+def adjustPartitionPosition(partitionPosition, direction):
+    if direction == ""left"":
+        partitionPositionInNums1 -= 1
+        partitionPositionInNums2 -= 1
+    elif direction == ""right"":
+        partitionPositionInNums1 += 1
+        partitionPositionInNums2 += 1
+
+def findMedianFromArr(mergedArray):
+    n = len(mergedArray)
+    if n % 2 != 0:
+        return mergedArray[n // 2]
+    else:
+        median = (mergedArray[n // 2 - 1] + mergedArray[n // 2]) / 2.0
+        return median
+
+def findMedian(nums1, nums2):
+    # Step 1 : Merging both input arrays into a single sorted array 'mergedArray'.
+    mergedArray = mergeArrays(nums1, nums2)
+    
+    n1 = len(nums1)
+    n2 = len(nums2)
+
+    partitionPositionInNums1, partitionPositionInNums2 = binarySearchPartition(mergedArray, 0, min(n1, n2))
+
+    maxSizeLeft, minSizeRight = findMaxMinForPartition(partitionPositionInNums1, nums1),findMaxMinForPartition(partitionPositionInNums2, nums2)
+    
+    # Checking if current partition is correct or not.
+    if (maxSizeLeft <= minSizeRight and maxSizeLeft2 <= minSizeRight2):
+        return findMedianFromArr(mergedArray)
+        
+    elif ((maxSizeLeft > minSizeRight and maxSizeLeft > minSizeRight2)): # If partition needs adjustment to left.
+        adjustPartitionPosition(partitionPositionInNums1, ""left"")
+
+    elif (maxSizeLeft > minSizeRight and maxSizeLeft > minSizeRight2):  # If partition needs adjustment to right.
+        adjustPartitionPosition(partitionPositionInNums2, ""right"")
+        
+    return findMedianFromArr(mergedArray)
+```",2.0,25.02172466700722
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm uses a sliding window with two pointers, left and right, to iterate through the string. It also uses a set to store the unique characters in the current window.
+
+1. Initialize left and right pointers to the start of the string, and maxLength to 0.
+2. Check if the character at the right index is in the set.
+   - If it's not in the set, add the character to the set, update maxLength, and move the right pointer forward.
+   - If it's in the set, remove the character at the left index from the set, and move the left pointer forward.
+3. Repeat step 2 until the right pointer reaches the end of the string.
+4. Return maxLength. 
+
+The algorithm runs in O(n) time, where n is the length of the input string.","```python
+def max_length_substring(s):
+    if not s:  # handle empty strings or null inputs gracefully
+        return 0
+    
+    left, right = 0, 0
+    maxLength = 0
+    uniqueSet = set()
+
+    while True:
+        if s[right] not in uniqueSet:
+            uniqueSet.add(s[right])
+            maxLength = max(maxLength, len(uniqueSet))
+            right += 1
+        else:
+            while s[left] != s[right]:
+                uniqueSet.remove(s[left])
+                left += 1
+            left += 1
+
+        if right == len(s):
+            break
+
+    return maxLength
+
+```",3.0,14.437438312001177
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            1. Initialize a dummy ListNode with a value of 0.
+2. Set current to that dummy ListNode, and set carry to 0.
+3. Iterate over the list nodes of l1 and l2, as well as the carry, in a while loop until all are null or 0.
+4. Calculate the sum of the node values and carry, store the carry for the next iteration, and store the value % 10 in a new ListNode connected to the current ListNode.
+5. Shift the current ListNode, l1, and l2 to the next node if available.
+6. Return the next of the dummy ListNode as a result.","```python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def addTwoNumbers(l1, l2):
+    dummy = ListNode(0)
+    current = dummy
+    carry = 0
+    
+    while l1 is not None or l2 is not None:
+        # Calculate values for addition
+        val1 = l1.val if l1 else 0
+        val2 = l2.val if l2 else 0
+        total = val1 + val2 + carry
+        
+        # Adjust carry and create new node with value % 10
+        carry = total // 10
+        digit_sum = total % 10
+        
+        # Create a new node for the tens place (digit % 10) and update carry if necessary
+        if digit_sum > 0:
+            val = ListNode(digit_sum)
+            current.next = val
+        
+        # Move to next position in list
+        l1 = l1.next if l1 else None
+        l2 = l2.next if l2 else None
+        current = current.next
+    
+    # Handle the final carry
+    if carry > 0:
+        val = ListNode(carry)
+        current.next = val
+        
+    result = self.convertListToArr(dummy.next)
+    return result
+
+def convertListToArr(self, node):
+    arr = []
+    while node is not None:
+        arr.append(node.val)
+        node = node.next
+    return arr
+
+# Example usage
+l1 = ListNode(2, ListNode(4, ListNode(3)))
+l2 = ListNode(5, ListNode(6, ListNode(4)))
+
+print(addTwoNumbers(l1, l2))  # Output: [7, 0, 8]
+```",3.0,20.796438334000413
+"
+            Instruction:
+            Create a solution in python for the input asked.
+        
+            Input:
+            The algorithm leverages a hash map (unordered_map in C++, HashMap in Java, dictionary in Python, and Map in JavaScript). It iterates through the given 'nums' array and calculates the complementary value (target - current value). If the complementary value is already in the hash map, it means that we found a solution, and we return those indices. If the complement is not in the hash map, we store the current element in the hash map with its index. If the algorithm doesn't find the solution, it returns an empty array or throws an exception (in Java).
+
+This approach has a time complexity of O(n) and a space complexity of O(n) as well.","```python
+def twoSum(nums, target):
+    hash_map = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in hash_map:
+            return [hash_map[complement], i]
+        else:
+            hash_map[num] = i
+    return []
+```",5.0,15.897687680000672
